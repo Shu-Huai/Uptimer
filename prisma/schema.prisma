@@ -1,0 +1,248 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ActivityNature {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+enum RecordSource {
+  MANUAL
+  TIMER
+}
+
+enum TimerStatus {
+  RUNNING
+  FINISHED
+  CANCELED
+}
+
+enum PointTransactionType {
+  RECORD_EARN
+  GOAL_REWARD
+  GOAL_PENALTY
+  REWARD_REDEEM
+}
+
+enum PointRelatedType {
+  RECORD
+  GOAL_SETTLEMENT
+  REDEMPTION
+}
+
+enum GoalPeriodType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum StockMode {
+  LIMITED
+  UNLIMITED
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String
+  email             String?            @unique
+  passwordHash      String?
+  pointBalance      Decimal            @default(0) @db.Decimal(12, 2)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  tags              Tag[]
+  activities        Activity[]
+  records           Record[]
+  timerSessions     TimerSession[]
+  pointTransactions PointTransaction[]
+  goals             Goal[]
+  goalSettlements   GoalSettlement[]
+  rewardItems       RewardItem[]
+  redemptions       Redemption[]
+}
+
+model Tag {
+  id           String        @id @default(cuid())
+  userId       String
+  name         String
+  color        String
+  note         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+  @@index([userId, createdAt])
+}
+
+model Activity {
+  id                String           @id @default(cuid())
+  userId            String
+  name              String
+  note              String?
+  icon              String?
+  nature            ActivityNature
+  rewardRatePerHour Decimal          @db.Decimal(10, 2)
+  isEnabled         Boolean          @default(true)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  records           Record[]
+  goalActivities    GoalActivity[]
+  timerSessions     TimerSession[]
+
+  @@unique([userId, name])
+  @@index([userId, isEnabled])
+}
+
+model Record {
+  id                     String         @id @default(cuid())
+  userId                 String
+  activityId             String
+  startAt                DateTime
+  endAt                  DateTime
+  durationMinutes        Int
+  source                 RecordSource
+  note                   String?
+  activityNameSnapshot   String
+  activityNatureSnapshot ActivityNature
+  rewardRateSnapshot     Decimal        @db.Decimal(10, 2)
+  pointDelta             Decimal        @db.Decimal(12, 2)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  user                   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity               Activity       @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@index([userId, startAt])
+  @@index([userId, endAt])
+  @@index([activityId, startAt])
+}
+
+model TimerSession {
+  id         String      @id @default(cuid())
+  userId     String
+  activityId String
+  startedAt  DateTime
+  endedAt    DateTime?
+  status     TimerStatus @default(RUNNING)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activity   Activity    @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@index([userId, status])
+  @@index([userId, startedAt])
+}
+
+model PointTransaction {
+  id           String               @id @default(cuid())
+  userId       String
+  type         PointTransactionType
+  amount       Decimal              @db.Decimal(12, 2)
+  balanceAfter Decimal              @db.Decimal(12, 2)
+  relatedType  PointRelatedType
+  relatedId    String
+  note         String?
+  happenedAt   DateTime             @default(now())
+  createdAt    DateTime             @default(now())
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, happenedAt])
+  @@index([userId, type])
+}
+
+model Goal {
+  id            String           @id @default(cuid())
+  userId        String
+  name          String
+  note          String?
+  icon          String?
+  color         String
+  periodType    GoalPeriodType
+  targetMinutes Int
+  rewardPoints  Decimal          @default(0) @db.Decimal(12, 2)
+  penaltyPoints Decimal          @default(0) @db.Decimal(12, 2)
+  isEnabled     Boolean          @default(true)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activities    GoalActivity[]
+  settlements   GoalSettlement[]
+
+  @@index([userId, periodType, isEnabled])
+}
+
+model GoalActivity {
+  goalId     String
+  activityId String
+  goal       Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  @@id([goalId, activityId])
+}
+
+model GoalSettlement {
+  id                    String   @id @default(cuid())
+  userId                String
+  goalId                String
+  periodStart           DateTime
+  periodEnd             DateTime
+  totalMinutes          Int
+  targetMinutesSnapshot Int
+  rewardPointsSnapshot  Decimal  @default(0) @db.Decimal(12, 2)
+  penaltyPointsSnapshot Decimal  @default(0) @db.Decimal(12, 2)
+  isCompleted           Boolean
+  pointDelta            Decimal  @default(0) @db.Decimal(12, 2)
+  settledAt             DateTime @default(now())
+  createdAt             DateTime @default(now())
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal                  Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@unique([goalId, periodStart, periodEnd])
+  @@index([goalId, settledAt])
+  @@index([userId, settledAt])
+}
+
+model RewardItem {
+  id          String       @id @default(cuid())
+  userId      String
+  name        String
+  note        String?
+  icon        String?
+  color       String
+  pricePoints Decimal      @db.Decimal(12, 2)
+  stockMode   StockMode
+  stock       Int?
+  isEnabled   Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  redemptions Redemption[]
+
+  @@index([userId, isEnabled])
+}
+
+model Redemption {
+  id            String     @id @default(cuid())
+  userId        String
+  rewardItemId  String
+  priceSnapshot Decimal    @db.Decimal(12, 2)
+  pointDelta    Decimal    @db.Decimal(12, 2)
+  createdAt     DateTime   @default(now())
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rewardItem    RewardItem @relation(fields: [rewardItemId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+  @@index([rewardItemId, createdAt])
+}
