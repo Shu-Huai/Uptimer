@@ -6,24 +6,46 @@ let currentSystemDark: boolean | undefined;
 let pageLoaded: boolean = false;
 
 function syncSystemThemeToPage(isDark: boolean): void {
+  const controller = WebControllerStore.controller;
+  if (!controller || !pageLoaded) {
+    console.info(`[UpTimer] system theme sync deferred. controller=${!!controller} pageLoaded=${pageLoaded} dark=${isDark}`);
+    return;
+  }
+
   const script = `(() => {
-    window.__UPTIMER_SYSTEM_DARK__ = ${isDark};
-    window.dispatchEvent(new CustomEvent('uptimer-native-system-theme-change', { detail: { dark: ${isDark} } }));
+    const dark = ${isDark};
+    window.__UPTIMER_SYSTEM_DARK__ = dark;
+    let mode = null;
+    try {
+      mode = window.localStorage?.getItem('uptimer-theme') ?? null;
+    } catch (_) {
+      mode = null;
+    }
+    if (!mode || mode === 'system') {
+      document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      document.documentElement.classList.toggle('dark', dark);
+      document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+    }
+    window.dispatchEvent(new CustomEvent('uptimer-native-system-theme-change', { detail: { dark } }));
   })()`;
 
-  WebControllerStore.controller?.runJavaScript(script).then(() => {
+  try {
+    console.info(`[UpTimer] syncing web system theme. dark=${isDark}`);
+    controller.runJavaScript(script).then(() => {
     console.info(`[UpTimer] system theme synchronized. dark=${isDark}`);
-  }).catch((error: Error) => {
-    console.error(`[UpTimer] system theme synchronization failed: ${error.message}`);
-  });
+    }).catch((error: Error) => {
+      console.error(`[UpTimer] system theme synchronization failed: ${error.message}`);
+    });
+  } catch (error) {
+    console.error(`[UpTimer] system theme synchronization threw: ${JSON.stringify(error)}`);
+  }
 }
 
 export function setHarmonySystemTheme(isDark: boolean): void {
+  AppStorage.setOrCreate<boolean>('uptimerSystemDark', isDark);
   currentSystemDark = isDark;
   console.info(`[UpTimer] system theme received. dark=${isDark}`);
-  if (pageLoaded) {
-    syncSystemThemeToPage(isDark);
-  }
+  syncSystemThemeToPage(isDark);
 }
 
 @Entry
@@ -35,6 +57,11 @@ struct Index {
 
   aboutToAppear(): void {
     WebControllerStore.controller = this.controller;
+    const storedSystemDark = AppStorage.get<boolean>('uptimerSystemDark');
+    if (storedSystemDark !== undefined) {
+      currentSystemDark = storedSystemDark;
+      console.info(`[UpTimer] initial system theme loaded from AppStorage. dark=${storedSystemDark}`);
+    }
   }
 
   private markArkWebDocument(): void {
@@ -57,16 +84,23 @@ struct Index {
         .height('100%')
         .javaScriptAccess(true)
         .domStorageAccess(true)
-        .onPageBegin(() => {
+        .onPageBegin((event) => {
           pageLoaded = false;
           this.isLoading = true;
           this.loadError = false;
+          console.info(`[UpTimer] page begin: ${event.url}`);
         })
-        .onPageEnd(() => {
+        .onPageEnd((event) => {
           pageLoaded = true;
           this.isLoading = false;
           this.markArkWebDocument();
+          console.info(`[UpTimer] page end: ${event.url}`);
+          const storedSystemDark = AppStorage.get<boolean>('uptimerSystemDark');
+          if (storedSystemDark !== undefined) {
+            currentSystemDark = storedSystemDark;
+          }
           if (currentSystemDark !== undefined) {
+            console.info(`[UpTimer] applying initial system theme after page end. dark=${currentSystemDark}`);
             syncSystemThemeToPage(currentSystemDark);
           }
         })

@@ -2,7 +2,14 @@
 
 import { createContext, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
 
-import { cycleTheme, isThemePreference, resolveSystemTheme, resolveTheme, type ThemePreference } from "@/lib/theme";
+import {
+  cycleTheme,
+  isThemePreference,
+  resolveSystemTheme,
+  resolveTheme,
+  shouldUseSystemTheme,
+  type ThemePreference,
+} from "@/lib/theme";
 
 const STORAGE_KEY = "uptimer-theme";
 
@@ -66,11 +73,18 @@ function getThemeServerSnapshot(): ThemePreference {
 function subscribeSystemTheme(listener: () => void) {
   if (typeof window === "undefined") return () => undefined;
   const mediaQuery = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  const handleNativeThemeChange = (event: Event) => {
+    const isDark = (event as CustomEvent<{ dark?: boolean }>).detail?.dark;
+    if (shouldUseSystemTheme(themeSnapshot) && typeof isDark === "boolean") {
+      applyTheme("system", isDark);
+    }
+    listener();
+  };
   mediaQuery?.addEventListener("change", listener);
-  window.addEventListener(NATIVE_SYSTEM_THEME_EVENT, listener);
+  window.addEventListener(NATIVE_SYSTEM_THEME_EVENT, handleNativeThemeChange);
   return () => {
     mediaQuery?.removeEventListener("change", listener);
-    window.removeEventListener(NATIVE_SYSTEM_THEME_EVENT, listener);
+    window.removeEventListener(NATIVE_SYSTEM_THEME_EVENT, handleNativeThemeChange);
   };
 }
 

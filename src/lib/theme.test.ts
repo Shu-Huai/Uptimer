@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { cycleTheme, getNextTheme, resolveSystemTheme, resolveTheme, type ThemePreference } from "./theme";
+import {
+  cycleTheme,
+  getNextTheme,
+  resolveSystemTheme,
+  resolveTheme,
+  shouldUseSystemTheme,
+  type ThemePreference,
+} from "./theme";
 
 describe("theme preference", () => {
   it("cycles light to dark to system to light", () => {
@@ -21,6 +28,12 @@ describe("theme preference", () => {
     assert.equal(resolveSystemTheme(true, false), true);
     assert.equal(resolveSystemTheme(false, true), false);
     assert.equal(resolveSystemTheme(undefined, true), true);
+  });
+
+  it("only lets native system theme updates affect the system preference", () => {
+    assert.equal(shouldUseSystemTheme("system"), true);
+    assert.equal(shouldUseSystemTheme("light"), false);
+    assert.equal(shouldUseSystemTheme("dark"), false);
   });
 
   it("falls back to light when cycling an invalid persisted preference", () => {

@@ -19,6 +19,10 @@ export function resolveSystemTheme(nativeDark: boolean | undefined, mediaQueryDa
   return nativeDark ?? mediaQueryDark;
 }
 
+export function shouldUseSystemTheme(theme: ThemePreference): boolean {
+  return theme === "system";
+}
+
 export function cycleTheme(theme: ThemePreference): ThemePreference {
   return isThemePreference(theme) ? getNextTheme(theme) : "light";
 }
