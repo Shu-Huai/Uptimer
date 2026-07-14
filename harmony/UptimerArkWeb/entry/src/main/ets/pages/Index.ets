@@ -13,6 +13,24 @@ struct Index {
     WebControllerStore.controller = this.controller;
   }
 
+  private applyGestureInset(): void {
+    const bottomInset = WebControllerStore.bottomInsetPx;
+    if (bottomInset <= 0) {
+      return;
+    }
+
+    const script = `(() => {
+      const shell = document.querySelector('.uptimer-shell');
+      if (shell) {
+        shell.style.setProperty('--ark-safe-bottom', '${bottomInset}px');
+      }
+      return 'ok';
+    })()`;
+    this.controller.runJavaScript(script).catch((error: Error) => {
+      console.error(`Failed to apply gesture inset: ${error.message}`);
+    });
+  }
+
   build() {
     Stack() {
       Web({
@@ -28,6 +46,7 @@ struct Index {
         })
         .onPageEnd(() => {
           this.isLoading = false;
+          this.applyGestureInset();
         })
         .onErrorReceive(() => {
           this.isLoading = false;

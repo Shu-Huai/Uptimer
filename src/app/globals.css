@@ -195,7 +195,7 @@ body::after {
   backdrop-filter: blur(14px);
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: var(--ark-safe-bottom, env(safe-area-inset-bottom, 0px));
 }
 
 .uptimer-tab {
