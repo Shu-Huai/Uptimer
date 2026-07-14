@@ -4,30 +4,41 @@ import { window } from '@kit.ArkUI';
 import { WebControllerStore } from '../common/WebControllerStore';
 
 export default class EntryAbility extends UIAbility {
-  onWindowStageCreate(windowStage: window.WindowStage): void {
-    try {
-      const mainWindow = windowStage.getMainWindowSync();
-      mainWindow.setWindowLayoutFullScreen(true).catch((error: Error) => {
-        console.error(`Failed to enable immersive layout: ${error.message}`);
-      });
-      mainWindow.setWindowSystemBarEnable(['status', 'navigation']).catch((error: Error) => {
-        console.error(`Failed to keep system bars visible: ${error.message}`);
-      });
-      mainWindow.setWindowSystemBarProperties({
-        statusBarColor: '#00000000',
-        navigationBarColor: '#F8FCFF'
-      }).catch((error: Error) => {
-        console.error(`Failed to make system bars transparent: ${error.message}`);
-      });
-    } catch (error) {
-      console.error(`Failed to configure immersive window: ${JSON.stringify(error)}`);
-    }
-
+  private loadMainPage(windowStage: window.WindowStage): void {
     windowStage.loadContent('pages/Index', (error) => {
       if (error.code) {
         console.error(`Failed to load the page: ${error.code}, ${error.message}`);
       }
     });
+  }
+
+  onWindowStageCreate(windowStage: window.WindowStage): void {
+    try {
+      const mainWindow = windowStage.getMainWindowSync();
+      mainWindow.setWindowLayoutFullScreen(true)
+        .then(() => {
+          const gestureAvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM_GESTURE);
+          WebControllerStore.bottomInsetVp = px2vp(gestureAvoidArea.bottomRect.height);
+          console.info(`ArkWeb gesture bottom inset: ${WebControllerStore.bottomInsetVp}vp`);
+          return mainWindow.setWindowSystemBarEnable(['status', 'navigation']);
+        })
+        .then(() => {
+          return mainWindow.setWindowSystemBarProperties({
+            statusBarColor: '#00000000',
+            navigationBarColor: '#F8FCFF'
+          });
+        })
+        .then(() => {
+          this.loadMainPage(windowStage);
+        })
+        .catch((error: Error) => {
+          console.error(`Failed to configure immersive layout: ${error.message}`);
+          this.loadMainPage(windowStage);
+        });
+    } catch (error) {
+      console.error(`Failed to configure immersive window: ${JSON.stringify(error)}`);
+      this.loadMainPage(windowStage);
+    }
   }
 
   onBackPressed(): boolean {

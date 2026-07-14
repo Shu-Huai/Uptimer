@@ -13,13 +13,14 @@ struct Index {
     WebControllerStore.controller = this.controller;
   }
 
-  private markArkWebDocument(): void {
+  private applyGestureInset(): void {
     const script = `(() => {
       document.documentElement.classList.add('arkweb');
+      document.documentElement.style.setProperty('--ark-safe-bottom', '${WebControllerStore.bottomInsetVp}px');
       return 'ok';
     })()`;
     this.controller.runJavaScript(script).catch((error: Error) => {
-      console.error(`Failed to mark ArkWeb document: ${error.message}`);
+      console.error(`Failed to apply ArkWeb gesture inset: ${error.message}`);
     });
   }
 
@@ -38,7 +39,7 @@ struct Index {
         })
         .onPageEnd(() => {
           this.isLoading = false;
-          this.markArkWebDocument();
+          this.applyGestureInset();
         })
         .onErrorReceive(() => {
           this.isLoading = false;
