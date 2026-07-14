@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack --hostname localhost --port 4399",
+    "test": "tsx --test src/lib/theme.test.ts",
     "build": "next build",
     "start": "next start --hostname localhost --port 4399",
     "lint": "eslint .",

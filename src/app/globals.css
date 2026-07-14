@@ -11,10 +11,51 @@
   --uptimer-primary-soft: #e9f4ff;
   --uptimer-success: #44ab73;
   --uptimer-loss: #eb9a48;
+  --uptimer-body-start: #f2f6fc;
+  --uptimer-body-end: #e3eaf5;
+  --uptimer-surface: #fdfefe;
+  --uptimer-surface-soft: #f7fbff;
+  --uptimer-input: #f4f8fd;
   --uptimer-shadow-lg: 0 24px 60px rgb(33 53 84 / 18%);
   --uptimer-shadow-md: 0 14px 32px rgb(33 53 84 / 12%);
   --uptimer-shadow-sm: 0 8px 20px rgb(33 53 84 / 9%);
   --uptimer-ease: cubic-bezier(0.21, 1, 0.31, 1);
+}
+
+html[data-theme="dark"] {
+  --uptimer-bg: #111827;
+  --uptimer-card: #1f2937;
+  --uptimer-text: #e5edf8;
+  --uptimer-muted: #a7b5c9;
+  --uptimer-line: #37475d;
+  --uptimer-primary-soft: #193653;
+  --uptimer-body-start: #111827;
+  --uptimer-body-end: #0b1220;
+  --uptimer-surface: #1f2937;
+  --uptimer-surface-soft: #26364a;
+  --uptimer-input: #243449;
+  --uptimer-shadow-lg: 0 24px 60px rgb(0 0 0 / 38%);
+  --uptimer-shadow-md: 0 14px 32px rgb(0 0 0 / 30%);
+  --uptimer-shadow-sm: 0 8px 20px rgb(0 0 0 / 24%);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    --uptimer-bg: #111827;
+    --uptimer-card: #1f2937;
+    --uptimer-text: #e5edf8;
+    --uptimer-muted: #a7b5c9;
+    --uptimer-line: #37475d;
+    --uptimer-primary-soft: #193653;
+    --uptimer-body-start: #111827;
+    --uptimer-body-end: #0b1220;
+    --uptimer-surface: #1f2937;
+    --uptimer-surface-soft: #26364a;
+    --uptimer-input: #243449;
+    --uptimer-shadow-lg: 0 24px 60px rgb(0 0 0 / 38%);
+    --uptimer-shadow-md: 0 14px 32px rgb(0 0 0 / 30%);
+    --uptimer-shadow-sm: 0 8px 20px rgb(0 0 0 / 24%);
+  }
 }
 
 @theme inline {
@@ -29,7 +70,7 @@ body {
   background:
     radial-gradient(170% 74% at 50% -12%, rgb(145 201 255 / 34%) 0%, transparent 60%),
     radial-gradient(160% 70% at 96% 120%, rgb(149 228 192 / 24%) 0%, transparent 56%),
-    linear-gradient(180deg, #f2f6fc 0%, var(--uptimer-bg) 44%, #e3eaf5 100%);
+    linear-gradient(180deg, var(--uptimer-body-start) 0%, var(--uptimer-bg) 44%, var(--uptimer-body-end) 100%);
   color: var(--uptimer-text);
   font-family: var(--font-sans);
   overflow: hidden;
@@ -81,7 +122,7 @@ body::after {
   border-radius: 34px;
   border: 1px solid color-mix(in oklab, var(--uptimer-line) 84%, white);
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 84%) 0%, rgb(250 252 255 / 74%) 18%, rgb(239 245 253 / 94%) 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--uptimer-surface) 92%, transparent) 0%, color-mix(in srgb, var(--uptimer-surface-soft) 82%, transparent) 18%, color-mix(in srgb, var(--uptimer-bg) 94%, transparent) 100%),
     var(--uptimer-bg);
   box-shadow: var(--uptimer-shadow-lg);
   display: flex;
@@ -173,6 +214,31 @@ body::after {
   border-color: color-mix(in oklab, var(--uptimer-primary) 32%, white);
 }
 
+.uptimer-icon-button {
+  display: inline-flex;
+  min-width: 40px;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in oklab, var(--uptimer-primary) 15%, var(--uptimer-surface));
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--uptimer-surface) 96%, transparent) 0%, var(--uptimer-primary-soft) 100%);
+  color: var(--uptimer-primary);
+  text-decoration: none;
+  transition: transform 200ms var(--uptimer-ease), box-shadow 220ms var(--uptimer-ease), border-color 220ms ease;
+}
+
+.uptimer-icon-button:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--uptimer-primary) 34%, var(--uptimer-surface));
+  box-shadow: var(--uptimer-shadow-sm);
+}
+
+.uptimer-icon-button:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--uptimer-primary) 40%, transparent);
+  outline-offset: 2px;
+}
+
 .uptimer-content {
   flex: 1;
   padding: 8px 12px;
@@ -191,7 +257,7 @@ body::after {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   border-top: 1px solid var(--uptimer-line);
-  background: color-mix(in oklab, #f7fbff 82%, white);
+  background: color-mix(in oklab, var(--uptimer-surface-soft) 82%, var(--uptimer-surface));
   backdrop-filter: blur(14px);
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%);
@@ -991,6 +1057,91 @@ button {
 .up-ghost-icon-btn:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 3px rgb(47 147 232 / 20%);
+}
+
+[data-theme="dark"] body::before,
+[data-theme="dark"] body::after {
+  opacity: 0.18;
+}
+
+[data-theme="dark"] .up-card,
+[data-theme="dark"] .up-soft-panel,
+[data-theme="dark"] .up-pill,
+[data-theme="dark"] .up-list-item,
+[data-theme="dark"] .up-page-header,
+[data-theme="dark"] .up-modal-card,
+[data-theme="dark"] .up-sheet-card,
+[data-theme="dark"] .up-overlay-surface {
+  border-color: var(--uptimer-line);
+  background: var(--uptimer-surface);
+  color: var(--uptimer-text);
+  box-shadow: var(--uptimer-shadow-md);
+}
+
+[data-theme="dark"] .up-card::before,
+[data-theme="dark"] .uptimer-shell::before,
+[data-theme="dark"] .uptimer-shell::after {
+  opacity: 0.35;
+}
+
+[data-theme="dark"] .up-field,
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  border-color: var(--uptimer-line);
+  background: var(--uptimer-input);
+  color: var(--uptimer-text);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--uptimer-muted);
+}
+
+[data-theme="dark"] .up-text-muted,
+[data-theme="dark"] .up-text-weak,
+[data-theme="dark"] .up-empty-state,
+[data-theme="dark"] .text-slate-600,
+[data-theme="dark"] [class*="text-[#8"],
+[data-theme="dark"] [class*="text-[#9"] {
+  color: var(--uptimer-muted) !important;
+}
+
+[data-theme="dark"] [class~="bg-white"],
+[data-theme="dark"] [class*="bg-[#fff"],
+[data-theme="dark"] [class*="bg-[#f"],
+[data-theme="dark"] [class*="border-[#d"],
+[data-theme="dark"] [class*="border-[#e"] {
+  border-color: var(--uptimer-line) !important;
+  background-color: var(--uptimer-surface-soft) !important;
+}
+
+[data-theme="dark"] .up-primary-btn,
+[data-theme="dark"] .up-danger-btn,
+[data-theme="dark"] .up-fab {
+  color: #f8fbff;
+}
+
+[data-theme="dark"] .uptimer-tabbar {
+  border-color: var(--uptimer-line);
+  background: var(--uptimer-surface);
+}
+
+[data-theme="dark"] .uptimer-tab {
+  color: #9aabc2;
+}
+
+[data-theme="dark"] .uptimer-tab.is-active {
+  color: #72bbff;
+  background: rgb(47 147 232 / 18%);
+}
+
+[data-theme="dark"] .up-overlay-backdrop {
+  background: rgb(3 8 18 / 72%);
+}
+
+[data-theme="dark"] .up-overlay-surface {
+  background: var(--uptimer-surface);
 }
 
 ::view-transition-old(root),

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 import { AppShell } from "@/components/ui/app-shell";
+import { ThemeProvider } from "@/components/ui/theme-provider";
 import { APP_NAME } from "@/lib/constants";
 
 import "./globals.css";
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html lang="zh-CN" className="h-full antialiased">
       <body className="uptimer-body">
         <div className="uptimer-shell">
-          <AppShell>{children}</AppShell>
+          <ThemeProvider>
+            <AppShell>{children}</AppShell>
+          </ThemeProvider>
           <div id="uptimer-overlay-root" className="uptimer-overlay-root" />
         </div>
       </body>
