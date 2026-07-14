@@ -202,6 +202,11 @@ body::after {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+.arkweb .uptimer-tab {
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
 .uptimer-tab {
   text-decoration: none;
   padding: 8px 4px 8px;
