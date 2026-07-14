@@ -17,9 +17,26 @@ struct Index {
     const script = `(() => {
       document.documentElement.classList.add('arkweb');
       document.documentElement.style.setProperty('--ark-safe-bottom', '${WebControllerStore.bottomInsetVp}px');
-      return 'ok';
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;padding-bottom:env(safe-area-inset-bottom, 0px);';
+      document.body.appendChild(probe);
+      const envBottom = parseFloat(getComputedStyle(probe).paddingBottom) || 0;
+      probe.remove();
+      const tabbar = document.querySelector('.uptimer-tabbar');
+      const tabbarStyle = tabbar ? getComputedStyle(tabbar) : undefined;
+      const tabbarRect = tabbar ? tabbar.getBoundingClientRect() : undefined;
+      return JSON.stringify({
+        nativeBottomVp: ${WebControllerStore.bottomInsetVp},
+        envBottom,
+        appliedPadding: tabbarStyle?.paddingBottom ?? 'missing',
+        tabbarTop: tabbarRect?.top ?? -1,
+        tabbarBottom: tabbarRect?.bottom ?? -1,
+        viewportHeight: window.innerHeight
+      });
     })()`;
-    this.controller.runJavaScript(script).catch((error: Error) => {
+    this.controller.runJavaScript(script).then((result) => {
+      console.info(`ArkWeb safe-area diagnostic: ${result}`);
+    }).catch((error: Error) => {
       console.error(`Failed to apply ArkWeb gesture inset: ${error.message}`);
     });
   }
@@ -40,6 +57,10 @@ struct Index {
         .onPageEnd(() => {
           this.isLoading = false;
           this.applyGestureInset();
+        })
+        .onConsole((event) => {
+          console.info(`ArkWeb web console: ${event.message.getMessage()}`);
+          return false;
         })
         .onErrorReceive(() => {
           this.isLoading = false;

@@ -19,7 +19,7 @@ export default class EntryAbility extends UIAbility {
         .then(() => {
           const gestureAvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM_GESTURE);
           WebControllerStore.bottomInsetVp = px2vp(gestureAvoidArea.bottomRect.height);
-          console.info(`ArkWeb gesture bottom inset: ${WebControllerStore.bottomInsetVp}vp`);
+          console.info(`ArkWeb gesture bottom inset: raw=${gestureAvoidArea.bottomRect.height}px vp=${WebControllerStore.bottomInsetVp}`);
           return mainWindow.setWindowSystemBarEnable(['status', 'navigation']);
         })
         .then(() => {
