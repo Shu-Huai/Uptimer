@@ -34,7 +34,7 @@ export default async function RewardsPage({ searchParams }: PageProps) {
   const rewardItems = items;
 
   return (
-    <div className="space-y-3 pb-10">
+    <div className="relative min-h-full space-y-3 pb-10">
       <header className="overflow-hidden rounded-3xl border border-[#d8e9df] bg-[linear-gradient(165deg,#8fd7c1_0%,#2b8b70_68%,#1f6f58_100%)] px-4 py-5 text-white shadow-[0_20px_40px_rgba(30,98,79,0.28)]">
         <div className="flex items-center justify-between text-sm">
           <span className="w-4" aria-hidden />
