@@ -175,7 +175,7 @@ body::after {
 
 .uptimer-content {
   flex: 1;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 12px;
   overflow-y: auto;
   min-height: 0;
   scroll-behavior: smooth;
@@ -524,6 +524,7 @@ body::after {
 }
 
 .uptimer-page {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
