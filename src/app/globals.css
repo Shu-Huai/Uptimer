@@ -77,9 +77,6 @@ body::after {
   margin: 0 auto;
   height: calc(100vh - 28px);
   height: calc(100dvh - 28px);
-  box-sizing: border-box;
-  padding-top: var(--ark-safe-top, env(safe-area-inset-top, 0px));
-  padding-bottom: var(--ark-safe-bottom, env(safe-area-inset-bottom, 0px));
   max-width: 420px;
   border-radius: 34px;
   border: 1px solid color-mix(in oklab, var(--uptimer-line) 84%, white);
@@ -125,7 +122,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px 6px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 18px 6px;
   backdrop-filter: blur(10px);
 }
 
@@ -178,7 +175,7 @@ body::after {
 
 .uptimer-content {
   flex: 1;
-  padding: 8px 12px 8px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
   overflow-y: auto;
   min-height: 0;
   scroll-behavior: smooth;
@@ -186,8 +183,8 @@ body::after {
 }
 
 .uptimer-auth-content {
-  padding-top: 28px;
-  padding-bottom: 20px;
+  padding-top: calc(28px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
 }
 
 .uptimer-tabbar {
@@ -198,6 +195,7 @@ body::after {
   backdrop-filter: blur(14px);
   flex-shrink: 0;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 72%);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .uptimer-tab {
