@@ -2,11 +2,16 @@
 
 import { createContext, useContext, useEffect, useMemo, useSyncExternalStore, type ReactNode } from "react";
 
-import { cycleTheme, isThemePreference, resolveTheme, type ThemePreference } from "@/lib/theme";
+import { cycleTheme, isThemePreference, resolveSystemTheme, resolveTheme, type ThemePreference } from "@/lib/theme";
 
 const STORAGE_KEY = "uptimer-theme";
 
 type ResolvedTheme = "light" | "dark";
+const NATIVE_SYSTEM_THEME_EVENT = "uptimer-native-system-theme-change";
+
+type HarmonyThemeWindow = Window & {
+  __UPTIMER_SYSTEM_DARK__?: boolean;
+};
 
 type ThemeContextValue = {
   theme: ThemePreference;
@@ -60,13 +65,20 @@ function getThemeServerSnapshot(): ThemePreference {
 
 function subscribeSystemTheme(listener: () => void) {
   if (typeof window === "undefined") return () => undefined;
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-  mediaQuery.addEventListener("change", listener);
-  return () => mediaQuery.removeEventListener("change", listener);
+  const mediaQuery = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  mediaQuery?.addEventListener("change", listener);
+  window.addEventListener(NATIVE_SYSTEM_THEME_EVENT, listener);
+  return () => {
+    mediaQuery?.removeEventListener("change", listener);
+    window.removeEventListener(NATIVE_SYSTEM_THEME_EVENT, listener);
+  };
 }
 
 function getSystemThemeSnapshot(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (typeof window === "undefined") return false;
+  const nativeDark = (window as HarmonyThemeWindow).__UPTIMER_SYSTEM_DARK__;
+  const mediaQueryDark = typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return resolveSystemTheme(typeof nativeDark === "boolean" ? nativeDark : undefined, mediaQueryDark);
 }
 
 function getSystemThemeServerSnapshot(): boolean {

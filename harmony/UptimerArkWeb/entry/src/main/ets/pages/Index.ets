@@ -2,6 +2,30 @@ import { webview } from '@kit.ArkWeb';
 
 import { TARGET_URL, WebControllerStore } from '../common/WebControllerStore';
 
+let currentSystemDark: boolean | undefined;
+let pageLoaded: boolean = false;
+
+function syncSystemThemeToPage(isDark: boolean): void {
+  const script = `(() => {
+    window.__UPTIMER_SYSTEM_DARK__ = ${isDark};
+    window.dispatchEvent(new CustomEvent('uptimer-native-system-theme-change', { detail: { dark: ${isDark} } }));
+  })()`;
+
+  WebControllerStore.controller?.runJavaScript(script).then(() => {
+    console.info(`[UpTimer] system theme synchronized. dark=${isDark}`);
+  }).catch((error: Error) => {
+    console.error(`[UpTimer] system theme synchronization failed: ${error.message}`);
+  });
+}
+
+export function setHarmonySystemTheme(isDark: boolean): void {
+  currentSystemDark = isDark;
+  console.info(`[UpTimer] system theme received. dark=${isDark}`);
+  if (pageLoaded) {
+    syncSystemThemeToPage(isDark);
+  }
+}
+
 @Entry
 @Component
 struct Index {
@@ -32,13 +56,19 @@ struct Index {
         .width('100%')
         .height('100%')
         .javaScriptAccess(true)
+        .domStorageAccess(true)
         .onPageBegin(() => {
+          pageLoaded = false;
           this.isLoading = true;
           this.loadError = false;
         })
         .onPageEnd(() => {
+          pageLoaded = true;
           this.isLoading = false;
           this.markArkWebDocument();
+          if (currentSystemDark !== undefined) {
+            syncSystemThemeToPage(currentSystemDark);
+          }
         })
         .onErrorReceive(() => {
           this.isLoading = false;

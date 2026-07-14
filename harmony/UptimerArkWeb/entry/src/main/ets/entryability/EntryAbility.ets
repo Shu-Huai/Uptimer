@@ -1,6 +1,8 @@
-import { UIAbility } from '@kit.AbilityKit';
+import { Configuration, ConfigurationConstant, UIAbility } from '@kit.AbilityKit';
 import { window } from '@kit.ArkUI';
+import { resourceManager } from '@kit.LocalizationKit';
 
+import { setHarmonySystemTheme } from '../pages/Index';
 import { WebControllerStore } from '../common/WebControllerStore';
 
 export default class EntryAbility extends UIAbility {
@@ -13,6 +15,14 @@ export default class EntryAbility extends UIAbility {
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
+    this.context.resourceManager.getConfiguration()
+      .then((configuration) => {
+        setHarmonySystemTheme(configuration.colorMode === resourceManager.ColorMode.DARK);
+      })
+      .catch((error: Error) => {
+        console.error(`Failed to read initial system theme: ${error.message}`);
+      });
+
     try {
       const mainWindow = windowStage.getMainWindowSync();
       mainWindow.setWindowLayoutFullScreen(true)
@@ -36,6 +46,10 @@ export default class EntryAbility extends UIAbility {
       console.error(`Failed to configure immersive window: ${JSON.stringify(error)}`);
       this.loadMainPage(windowStage);
     }
+  }
+
+  onConfigurationUpdate(newConfig: Configuration): void {
+    setHarmonySystemTheme(newConfig.colorMode === ConfigurationConstant.ColorMode.COLOR_MODE_DARK);
   }
 
   onBackPressed(): boolean {

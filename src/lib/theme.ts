@@ -15,6 +15,10 @@ export function resolveTheme(theme: ThemePreference, prefersDark: boolean): "lig
   return theme;
 }
 
+export function resolveSystemTheme(nativeDark: boolean | undefined, mediaQueryDark: boolean): boolean {
+  return nativeDark ?? mediaQueryDark;
+}
+
 export function cycleTheme(theme: ThemePreference): ThemePreference {
   return isThemePreference(theme) ? getNextTheme(theme) : "light";
 }
