@@ -7,8 +7,6 @@ export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     try {
       const mainWindow = windowStage.getMainWindowSync();
-      const gestureAvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM_GESTURE);
-      WebControllerStore.bottomInsetPx = px2vp(gestureAvoidArea.bottomRect.height);
       mainWindow.setWindowLayoutFullScreen(true).catch((error: Error) => {
         console.error(`Failed to enable immersive layout: ${error.message}`);
       });
@@ -17,7 +15,7 @@ export default class EntryAbility extends UIAbility {
       });
       mainWindow.setWindowSystemBarProperties({
         statusBarColor: '#00000000',
-        navigationBarColor: '#00000000'
+        navigationBarColor: '#F8FCFF'
       }).catch((error: Error) => {
         console.error(`Failed to make system bars transparent: ${error.message}`);
       });

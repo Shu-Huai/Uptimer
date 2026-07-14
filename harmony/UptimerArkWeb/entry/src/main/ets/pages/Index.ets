@@ -13,21 +13,13 @@ struct Index {
     WebControllerStore.controller = this.controller;
   }
 
-  private applyGestureInset(): void {
-    const bottomInset = WebControllerStore.bottomInsetPx;
-    if (bottomInset <= 0) {
-      return;
-    }
-
+  private markArkWebDocument(): void {
     const script = `(() => {
-      const shell = document.querySelector('.uptimer-shell');
-      if (shell) {
-        shell.style.setProperty('--ark-safe-bottom', '${bottomInset}px');
-      }
+      document.documentElement.classList.add('arkweb');
       return 'ok';
     })()`;
     this.controller.runJavaScript(script).catch((error: Error) => {
-      console.error(`Failed to apply gesture inset: ${error.message}`);
+      console.error(`Failed to mark ArkWeb document: ${error.message}`);
     });
   }
 
@@ -46,7 +38,7 @@ struct Index {
         })
         .onPageEnd(() => {
           this.isLoading = false;
-          this.applyGestureInset();
+          this.markArkWebDocument();
         })
         .onErrorReceive(() => {
           this.isLoading = false;
@@ -94,7 +86,7 @@ struct Index {
     .height('100%')
     .expandSafeArea(
       [SafeAreaType.SYSTEM],
-      [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM]
+      [SafeAreaEdge.TOP]
     )
   }
 }

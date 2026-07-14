@@ -198,6 +198,10 @@ body::after {
   padding-bottom: var(--ark-safe-bottom, env(safe-area-inset-bottom, 0px));
 }
 
+.arkweb .uptimer-tabbar {
+  padding-bottom: 0;
+}
+
 .uptimer-tab {
   text-decoration: none;
   padding: 8px 4px 8px;
