@@ -15,9 +15,7 @@ export default class EntryAbility extends UIAbility {
       });
       mainWindow.setWindowSystemBarProperties({
         statusBarColor: '#00000000',
-        navigationBarColor: '#00000000',
-        isStatusBarLightIcon: false,
-        isNavigationBarLightIcon: false
+        navigationBarColor: '#00000000'
       }).catch((error: Error) => {
         console.error(`Failed to make system bars transparent: ${error.message}`);
       });
