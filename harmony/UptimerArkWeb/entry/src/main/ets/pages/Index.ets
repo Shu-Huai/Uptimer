@@ -13,6 +13,22 @@ struct Index {
     WebControllerStore.controller = this.controller;
   }
 
+  private applySystemInsets(): void {
+    const topInset = WebControllerStore.topInsetPx;
+    const bottomInset = WebControllerStore.bottomInsetPx;
+    const script = `(() => {
+      const shell = document.querySelector('.uptimer-shell');
+      if (shell) {
+        shell.style.setProperty('--ark-safe-top', '${topInset}px');
+        shell.style.setProperty('--ark-safe-bottom', '${bottomInset}px');
+      }
+      return 'ok';
+    })()`;
+    this.controller.runJavaScript(script).catch((error: Error) => {
+      console.error(`Failed to apply system insets: ${error.message}`);
+    });
+  }
+
   build() {
     Stack() {
       Web({
@@ -28,6 +44,7 @@ struct Index {
         })
         .onPageEnd(() => {
           this.isLoading = false;
+          this.applySystemInsets();
         })
         .onErrorReceive(() => {
           this.isLoading = false;
