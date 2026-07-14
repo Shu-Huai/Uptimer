@@ -369,7 +369,7 @@ export function TimerPanel({ activities, initialRunningSession }: TimerPanelProp
             }}
           >
             <div className="grid size-full place-items-center rounded-full">
-              <div className="grid size-[84%] place-items-center rounded-full bg-white text-center">
+              <div className="up-timer-ring-inner grid size-[84%] place-items-center rounded-full text-center">
               <p className="text-xl font-semibold text-[#2f384b]">{formatDuration(elapsedSeconds)}</p>
               <p className={`text-lg font-semibold ${pointDelta >= 0 ? "text-[#4ab06e]" : "text-[#f39c44]"}`}>
                 {pointDelta >= 0 ? "+" : ""}

@@ -21,6 +21,7 @@
   --uptimer-control: #788cab;
   --uptimer-ring-track: #e8edf5;
   --uptimer-chart-track: #edf3fb;
+  --uptimer-ring-inner: #ffffff;
   --uptimer-positive-surface: #eef9ec;
   --uptimer-neutral-surface: #edf6ff;
   --uptimer-negative-surface: #fff6eb;
@@ -47,6 +48,7 @@ html[data-theme="dark"] {
   --uptimer-control: #b8c7dc;
   --uptimer-ring-track: #34465d;
   --uptimer-chart-track: #34465d;
+  --uptimer-ring-inner: #26364a;
   --uptimer-positive-surface: #1d3a2a;
   --uptimer-neutral-surface: #193653;
   --uptimer-negative-surface: #49321f;
@@ -73,6 +75,7 @@ html[data-theme="dark"] {
     --uptimer-control: #b8c7dc;
     --uptimer-ring-track: #34465d;
     --uptimer-chart-track: #34465d;
+    --uptimer-ring-inner: #26364a;
     --uptimer-positive-surface: #1d3a2a;
     --uptimer-neutral-surface: #193653;
     --uptimer-negative-surface: #49321f;
@@ -1083,6 +1086,10 @@ button {
   box-shadow: 0 0 0 3px rgb(47 147 232 / 20%);
 }
 
+.up-timer-ring-inner {
+  background: var(--uptimer-ring-inner);
+}
+
 [data-theme="dark"] body::before,
 [data-theme="dark"] body::after {
   opacity: 0.18;
@@ -1231,6 +1238,22 @@ button {
 
 [data-theme="dark"] .up-progress-track {
   background: var(--uptimer-chart-track);
+}
+
+[data-theme="dark"] .up-secondary-btn {
+  border-color: var(--uptimer-line);
+  background: linear-gradient(180deg, #2b4058 0%, #203247 100%);
+  color: #8bc5ff;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%), 0 8px 18px rgb(0 0 0 / 16%);
+}
+
+[data-theme="dark"] .up-secondary-btn:hover {
+  border-color: #547493;
+  background: linear-gradient(180deg, #314a64 0%, #253a51 100%);
+}
+
+[data-theme="dark"] [class~="bg-white"] {
+  background-color: var(--uptimer-ring-inner) !important;
 }
 
 [data-theme="dark"] .up-primary-btn,
