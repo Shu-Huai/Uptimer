@@ -1162,7 +1162,11 @@ button {
 [data-theme="dark"] [class~="border-[#ecf1f8]"],
 [data-theme="dark"] [class~="border-[#edf2f8]"] {
   border-color: var(--uptimer-line) !important;
-  background-color: var(--uptimer-surface-soft) !important;
+}
+
+[data-theme="dark"] .up-empty-state {
+  background: var(--uptimer-surface-soft) !important;
+  border-color: var(--uptimer-line) !important;
 }
 
 [data-theme="dark"] .up-page-title,
@@ -1302,8 +1306,13 @@ button {
 [data-theme="dark"] [class*="bg-[#ebf6ff]"],
 [data-theme="dark"] [class*="bg-[#edf6ff]"],
 [data-theme="dark"] [class*="bg-[#eff8ff]"],
-[data-theme="dark"] [class*="bg-[#eaf3ff]"] {
+[data-theme="dark"] [class*="bg-[#eaf3ff]"],
+[data-theme="dark"] [class*="bg-[#e8f4ff]"] {
   background-color: var(--uptimer-neutral-surface) !important;
+}
+
+[data-theme="dark"] [class*="bg-[#e8f4ff]"] {
+  background-color: var(--uptimer-primary-soft) !important;
 }
 
 [data-theme="dark"] [class*="bg-[#eef9ec]"],
