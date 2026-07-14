@@ -365,7 +365,7 @@ export function TimerPanel({ activities, initialRunningSession }: TimerPanelProp
           <div
             className="grid aspect-square h-full w-auto max-h-[240px] max-w-full place-items-center overflow-hidden rounded-full bg-[#e8edf5] p-[12%]"
             style={{
-              background: `conic-gradient(#2a9df4 ${Math.round(progress * 360)}deg, #e8edf5 0deg)`,
+              background: `conic-gradient(#2a9df4 ${Math.round(progress * 360)}deg, var(--uptimer-ring-track) 0deg)`,
             }}
           >
             <div className="grid size-full place-items-center rounded-full">
