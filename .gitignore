@@ -46,3 +46,4 @@ next-env.d.ts
 /harmony/**/build/
 /harmony/**/.hvigor/
 /harmony/**/oh_modules/
+/harmony/**/.idea/
