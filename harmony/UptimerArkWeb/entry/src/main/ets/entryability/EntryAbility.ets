@@ -5,6 +5,26 @@ import { WebControllerStore } from '../common/WebControllerStore';
 
 export default class EntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
+    try {
+      const mainWindow = windowStage.getMainWindowSync();
+      mainWindow.setWindowLayoutFullScreen(true).catch((error: Error) => {
+        console.error(`Failed to enable immersive layout: ${error.message}`);
+      });
+      mainWindow.setWindowSystemBarEnable(['status', 'navigation']).catch((error: Error) => {
+        console.error(`Failed to keep system bars visible: ${error.message}`);
+      });
+      mainWindow.setWindowSystemBarProperties({
+        statusBarColor: '#00000000',
+        navigationBarColor: '#00000000',
+        isStatusBarLightIcon: false,
+        isNavigationBarLightIcon: false
+      }).catch((error: Error) => {
+        console.error(`Failed to make system bars transparent: ${error.message}`);
+      });
+    } catch (error) {
+      console.error(`Failed to configure immersive window: ${JSON.stringify(error)}`);
+    }
+
     windowStage.loadContent('pages/Index', (error) => {
       if (error.code) {
         console.error(`Failed to load the page: ${error.code}, ${error.message}`);
