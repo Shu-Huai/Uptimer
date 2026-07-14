@@ -28,11 +28,29 @@ function getThemeSnapshot(): ThemePreference {
   return themeSnapshot;
 }
 
+function readStoredTheme(): unknown {
+  if (typeof window === "undefined") return null;
+
+  try {
+    return window.localStorage?.getItem(STORAGE_KEY) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function persistTheme(theme: ThemePreference): void {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage?.setItem(STORAGE_KEY, theme);
+  } catch {
+    // ArkWeb may expose localStorage as null or reject access for HTTP pages.
+  }
+}
+
 function setThemeSnapshot(theme: ThemePreference): void {
   themeSnapshot = theme;
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(STORAGE_KEY, theme);
-  }
+  persistTheme(theme);
   themeListeners.forEach((listener) => listener());
 }
 
@@ -75,7 +93,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const storedTheme = window.localStorage.getItem(STORAGE_KEY);
+    const storedTheme = readStoredTheme();
     const initialTheme = isThemePreference(storedTheme) ? storedTheme : "system";
     if (initialTheme !== themeSnapshot) setThemeSnapshot(initialTheme);
   }, []);
