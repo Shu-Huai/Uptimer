@@ -41,3 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# HarmonyOS / Hvigor generated files
+/harmony/**/build/
+/harmony/**/.hvigor/
+/harmony/**/oh_modules/

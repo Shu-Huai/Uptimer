@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "UpTimer"
+    },
+    {
+      "name": "module_desc",
+      "value": "UpTimer ArkWeb application"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "UpTimer web application"
+    }
+  ]
+}

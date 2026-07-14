@@ -1,0 +1,8 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "uptimer-arkweb",
+  "version": "1.0.0",
+  "description": "UpTimer HarmonyOS ArkWeb wrapper",
+  "license": "MIT",
+  "devDependencies": {}
+}
