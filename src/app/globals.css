@@ -77,6 +77,9 @@ body::after {
   margin: 0 auto;
   height: calc(100vh - 28px);
   height: calc(100dvh - 28px);
+  box-sizing: border-box;
+  padding-top: var(--ark-safe-top, env(safe-area-inset-top, 0px));
+  padding-bottom: var(--ark-safe-bottom, env(safe-area-inset-bottom, 0px));
   max-width: 420px;
   border-radius: 34px;
   border: 1px solid color-mix(in oklab, var(--uptimer-line) 84%, white);
@@ -1031,9 +1034,6 @@ button {
     max-width: none;
     height: 100vh;
     height: 100dvh;
-    box-sizing: border-box;
-    padding-top: var(--ark-safe-top, env(safe-area-inset-top, 0px));
-    padding-bottom: var(--ark-safe-bottom, env(safe-area-inset-bottom, 0px));
     border-radius: 0;
     border: 0;
     box-shadow: none;
