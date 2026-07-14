@@ -8,8 +8,12 @@ export default class EntryAbility extends UIAbility {
     try {
       const mainWindow = windowStage.getMainWindowSync();
       const systemAvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM);
+      const gestureAvoidArea = mainWindow.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM_GESTURE);
       WebControllerStore.topInsetPx = systemAvoidArea.topRect.height;
-      WebControllerStore.bottomInsetPx = systemAvoidArea.bottomRect.height;
+      WebControllerStore.bottomInsetPx = Math.max(
+        systemAvoidArea.bottomRect.height,
+        gestureAvoidArea.bottomRect.height
+      );
       mainWindow.setWindowLayoutFullScreen(true).catch((error: Error) => {
         console.error(`Failed to enable immersive layout: ${error.message}`);
       });
