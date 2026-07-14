@@ -199,7 +199,7 @@ body::after {
 }
 
 .arkweb .uptimer-tabbar {
-  padding-bottom: var(--ark-safe-bottom, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .uptimer-tab {
