@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\lvzhi\\.ohos\\config\\default_UptimerArkWeb_WHSOVvoZrpXxZ52kMLKHXkVbYV22320w3WvjQfUFL9Q=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B7BEE64255BB0D1258C4549C337F50E10BF2CA32093395AE83B92492CF42289A2035E014587CFF4",
+          "profile": "C:\\Users\\lvzhi\\.ohos\\config\\default_UptimerArkWeb_WHSOVvoZrpXxZ52kMLKHXkVbYV22320w3WvjQfUFL9Q=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\lvzhi\\.ohos\\config\\default_UptimerArkWeb_WHSOVvoZrpXxZ52kMLKHXkVbYV22320w3WvjQfUFL9Q=.p12",
+          "storePassword": "0000001BDB8F0BAAB6BAEBC8A65294E265171179832A329B94AF7C101EFE7099E10D825E527A14B97FF540"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
