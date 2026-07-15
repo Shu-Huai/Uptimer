@@ -186,6 +186,26 @@ body::after {
   pointer-events: none;
 }
 
+.up-route-loading {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 200;
+  height: 3px;
+  overflow: hidden;
+  pointer-events: none;
+  background: transparent;
+}
+
+.up-route-loading-bar {
+  display: block;
+  width: 42%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--uptimer-primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--uptimer-primary) 65%, transparent);
+  animation: uptimer-route-loading 1.15s ease-in-out infinite;
+}
+
 .uptimer-brand {
   display: flex;
   align-items: center;
@@ -1085,6 +1105,20 @@ button {
 .up-ghost-icon-btn:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 3px rgb(47 147 232 / 20%);
+}
+
+@keyframes uptimer-route-loading {
+  0% {
+    transform: translateX(-110%);
+  }
+
+  50% {
+    transform: translateX(130%);
+  }
+
+  100% {
+    transform: translateX(260%);
+  }
 }
 
 .up-timer-ring-inner {
