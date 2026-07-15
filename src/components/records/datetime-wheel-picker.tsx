@@ -217,13 +217,13 @@ export function DateTimeWheelPicker({ name, label, value, onChange, actions }: D
   }
 
   return (
-    <div className="up-soft-panel border-[#e9eef6] bg-[#fbfdff] p-2.5">
+    <div className="up-soft-panel up-datetime-picker border-[#e9eef6] bg-[#fbfdff] p-2.5">
       <div className="mb-2 flex items-center justify-between text-sm text-[#74839a]">
         <span>{label}</span>
         {actions}
       </div>
 
-      <div className="up-soft-panel grid grid-cols-3 gap-1.5 rounded-xl bg-[#f4f8fd] p-1.5">
+      <div className="up-soft-panel up-datetime-picker-grid grid grid-cols-3 gap-1.5 rounded-xl bg-[#f4f8fd] p-1.5">
         <WheelColumn ariaLabel={`${label}-日期`} options={dayList} selectedIndex={selectedDayIndex} onSelect={handleDaySelect} />
         <WheelColumn
           ariaLabel={`${label}-小时`}

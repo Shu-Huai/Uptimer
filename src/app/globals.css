@@ -585,7 +585,7 @@ body::after {
   top: 50%;
   height: 36px;
   transform: translateY(-50%);
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid #dce8f6;
   background: #f2f7fd;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 80%);
@@ -604,16 +604,17 @@ body::after {
   background: transparent;
   border: 0;
   color: #9cabc1;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1;
 }
 
 .up-wheel-item small {
   display: block;
-  margin-top: 2px;
+  margin-top: -2px;
   font-size: 11px;
   font-weight: 500;
+  line-height: 0.8;
   color: #b7c2d3;
 }
 
@@ -1115,6 +1116,41 @@ button {
   opacity: 0.35;
 }
 
+[data-theme="dark"] .up-card::before {
+  background: none;
+}
+
+[data-theme="dark"] .uptimer-shell::after,
+[data-theme="dark"] .uptimer-tabbar,
+[data-theme="dark"] .up-pill,
+[data-theme="dark"] .up-secondary-btn,
+[data-theme="dark"] .up-segmented,
+[data-theme="dark"] .up-stat-grid,
+[data-theme="dark"] .up-soft-panel,
+[data-theme="dark"] .up-inline-chip,
+[data-theme="dark"] .up-inline-chip-sm,
+[data-theme="dark"] .up-ghost-icon-btn,
+[data-theme="dark"] .up-wheel-highlight {
+  box-shadow: none;
+}
+
+[data-theme="dark"] .up-inline-chip,
+[data-theme="dark"] .up-inline-chip-sm {
+  border-color: var(--uptimer-line);
+  background: var(--uptimer-input);
+  color: var(--uptimer-control);
+}
+
+[data-theme="dark"] .up-datetime-picker {
+  border-color: var(--uptimer-line) !important;
+  background: var(--uptimer-surface) !important;
+}
+
+[data-theme="dark"] .up-datetime-picker-grid {
+  border-color: var(--uptimer-line) !important;
+  background: var(--uptimer-input) !important;
+}
+
 [data-theme="dark"] .up-field,
 [data-theme="dark"] input,
 [data-theme="dark"] select,
@@ -1232,8 +1268,9 @@ button {
 }
 
 [data-theme="dark"] .up-wheel-highlight {
+  border-color: var(--uptimer-line);
   background: var(--uptimer-primary-soft);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
+  box-shadow: none;
 }
 
 [data-theme="dark"] .up-progress-track {
@@ -1260,6 +1297,14 @@ button {
 [data-theme="dark"] .up-danger-btn,
 [data-theme="dark"] .up-fab {
   color: #f8fbff;
+}
+
+[data-theme="dark"] .up-fab {
+  box-shadow: 0 16px 28px rgb(0 0 0 / 32%);
+}
+
+[data-theme="dark"] .up-fab:hover {
+  box-shadow: 0 18px 30px rgb(0 0 0 / 36%);
 }
 
 [data-theme="dark"] .uptimer-tabbar {

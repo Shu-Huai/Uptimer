@@ -380,7 +380,6 @@ export function BackfillSheetForm({
                 </div>
               </div>
 
-              <p className="mt-1 text-right text-xs text-[#a9b6c8]">位置已记录</p>
             </div>
             {deleteError ? <p className="text-sm text-rose-500">{deleteError}</p> : null}
             {mode === "edit" ? (
