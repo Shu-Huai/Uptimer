@@ -46,3 +46,9 @@ export type ReconcileGoalSettlementsByRecordMutationInput = {
   startAt: Date;
   endAt: Date;
 };
+
+export type RollbackGoalSettlementInput = {
+  userId: string;
+  goalId: string;
+  settlementId: string;
+};

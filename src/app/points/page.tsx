@@ -56,8 +56,7 @@ export default async function PointsPage() {
     <div className="flex h-full min-h-0 flex-col gap-3">
       <header className="up-card up-page-header">
         <BackButton fallbackHref="/activities" />
-        <h1 className="up-page-title">积分流水</h1>
-        <span className="up-page-meta">⋯</span>
+        <h1 className="up-page-title up-header-center-title">积分流水</h1>
       </header>
 
       <SectionCard title="当前积分">

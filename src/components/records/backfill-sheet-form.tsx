@@ -58,7 +58,8 @@ function formatDateInput(date: Date): string {
   const d = String(date.getDate()).padStart(2, "0");
   const hh = String(date.getHours()).padStart(2, "0");
   const mm = String(date.getMinutes()).padStart(2, "0");
-  return `${y}-${m}-${d}T${hh}:${mm}`;
+  const ss = String(date.getSeconds()).padStart(2, "0");
+  return `${y}-${m}-${d}T${hh}:${mm}:${ss}`;
 }
 
 function formatDurationText(startAt: string, endAt: string): string {
@@ -348,7 +349,7 @@ export function BackfillSheetForm({
                   <button
                     type="button"
                     onClick={handleOpenActivityPicker}
-                    className="grid w-full gap-1 text-[#597796] disabled:cursor-not-allowed disabled:opacity-55"
+                    className="up-activity-select grid w-full gap-1 text-[#597796] disabled:cursor-not-allowed disabled:opacity-55"
                     disabled={!activities.length}
                   >
                     <span
@@ -373,7 +374,7 @@ export function BackfillSheetForm({
                   {activityError ? <p className="text-xs text-rose-500">{activityError}</p> : null}
                   <textarea
                     name="note"
-                    className="min-h-[78px] rounded-2xl border border-[#ecf1f7] bg-[#fbfdff] px-3 py-2 text-sm text-[#6c7d95] placeholder:text-[#9eafc3]"
+                    className="up-field min-h-[78px] text-sm placeholder:text-[#9eafc3]"
                     placeholder={currentActivity ? `${currentActivity.name} 描述` : "描述"}
                     defaultValue={defaultNote ?? ""}
                   />
@@ -388,7 +389,7 @@ export function BackfillSheetForm({
                   type="button"
                   onClick={openDeleteConfirm}
                   disabled={!recordId || isDeleting}
-                  className="col-span-1 rounded-2xl border border-rose-200 bg-rose-50 px-2 py-3 text-sm font-semibold text-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="up-delete-btn col-span-1 px-2 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   删除
                 </button>
@@ -432,7 +433,7 @@ export function BackfillSheetForm({
                     type="button"
                     onClick={handleConfirmDelete}
                     disabled={isDeleting}
-                    className="rounded-2xl bg-rose-500 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                    className="up-delete-btn py-2 text-sm disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isDeleting ? "删除中..." : "确认删除"}
                   </button>
@@ -491,7 +492,7 @@ export function BackfillSheetForm({
                           key={item.id}
                           type="button"
                           onClick={() => handlePickActivity(item.id)}
-                          className="text-center"
+                          className="up-activity-option text-center"
                           aria-pressed={isSelected}
                         >
                           <span

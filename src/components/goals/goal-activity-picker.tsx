@@ -142,7 +142,7 @@ export function GoalActivityPicker({ activities, defaultSelectedIds }: GoalActiv
                           key={activity.id}
                           type="button"
                           onClick={() => toggleActivity(activity.id)}
-                          className="text-center"
+                          className="up-activity-option text-center"
                           aria-pressed={isActive}
                         >
                           <span
@@ -211,7 +211,7 @@ export function GoalActivityPicker({ activities, defaultSelectedIds }: GoalActiv
       <button
         type="button"
         onClick={openPicker}
-        className="up-soft-panel flex w-full items-center justify-between border-[#dfe8f4] bg-[#f4f8fd] px-3 py-3 text-left"
+        className="up-activity-select up-soft-panel flex w-full items-center justify-between border-[#dfe8f4] bg-[#f4f8fd] px-3 py-3 text-left"
       >
         <span className="block min-w-0">
           <span className="block truncate text-base font-semibold text-[#44526d]">

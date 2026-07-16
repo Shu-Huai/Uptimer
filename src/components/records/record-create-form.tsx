@@ -1,6 +1,7 @@
 import type { Activity } from "@prisma/client";
 
 import { createRecordAction } from "@/actions/record.actions";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 type RecordCreateFormProps = {
   activities: Activity[];
@@ -13,14 +14,12 @@ export function RecordCreateForm({ activities, initialStart, initialEnd }: Recor
     <form action={createRecordAction} className="space-y-3">
       <label className="grid gap-1 text-sm text-[#637083]">
         活动
-        <select name="activityId" required className="up-field">
-          <option value="">请选择活动</option>
-          {activities.map((activity) => (
-            <option key={activity.id} value={activity.id}>
-              {activity.name}
-            </option>
-          ))}
-        </select>
+        <CustomSelect
+          name="activityId"
+          required
+          placeholder="请选择活动"
+          options={activities.map((activity) => ({ value: activity.id, label: activity.name }))}
+        />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
@@ -29,6 +28,7 @@ export function RecordCreateForm({ activities, initialStart, initialEnd }: Recor
           <input
             name="startAt"
             type="datetime-local"
+            step={1}
             required
             defaultValue={initialStart}
             className="up-date-field"
@@ -40,6 +40,7 @@ export function RecordCreateForm({ activities, initialStart, initialEnd }: Recor
           <input
             name="endAt"
             type="datetime-local"
+            step={1}
             required
             defaultValue={initialEnd}
             className="up-date-field"

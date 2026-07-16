@@ -77,9 +77,9 @@ export default async function RewardsPage({ searchParams }: PageProps) {
             >
               <div className="min-w-0">
                 <p className="font-semibold text-[#3f4c63]">
-                  <IconifyIcon icon={item.icon} fallback="🎁" className="mr-1 inline-block size-4 align-[-2px]" /> {item.name}
+                  <IconifyIcon icon={item.icon} fallback="material-symbols:redeem" className="mr-1 inline-block size-4 align-[-2px]" /> {item.name}
                 </p>
-                <p className="text-xs text-[#90a0b7]">🪙 {price.toFixed(2)} · {stockText}</p>
+                <p className="flex items-center gap-1 text-xs text-[#90a0b7]"><IconifyIcon icon="material-symbols:monetization-on" className="size-4" /> {price.toFixed(2)} · {stockText}</p>
                 {item.note ? <p className="mt-1 truncate text-xs text-[#a2aec0]">{item.note}</p> : null}
               </div>
               <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export default async function RewardsPage({ searchParams }: PageProps) {
                 </Link>
                 <form action={deleteRewardAction}>
                   <input type="hidden" name="id" value={item.id} />
-                  <button type="submit" className="up-inline-chip cursor-pointer px-3 py-1.5 text-sm">
+                  <button type="submit" className="up-delete-btn cursor-pointer px-3 py-1.5 text-sm">
                     <IconifyIcon icon="material-symbols:delete"/>
                   </button>
                 </form>

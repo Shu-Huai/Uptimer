@@ -2,6 +2,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 
 import { DashboardTimerActions } from "@/components/dashboard/dashboard-timer-actions";
+import { IconifyIcon } from "@/components/ui/iconify-icon";
 import { SectionCard } from "@/components/ui/section-card";
 import { requireUserId } from "@/lib/auth-guard";
 import { DELETED_ACTIVITY_NAME } from "@/lib/constants";
@@ -74,11 +75,9 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-3 pb-10">
       <header className="up-card up-page-header">
-        <span className="w-6" aria-hidden />
-        <div className="up-pill min-w-52 text-center text-sm font-semibold up-text-primary">
+        <div className="up-header-center-title up-pill min-w-52 text-center text-sm font-semibold up-text-primary">
           {todayLabel}
         </div>
-        <span className="up-page-meta">⋯</span>
       </header>
 
       <div className="up-card up-stat-grid">
@@ -134,7 +133,7 @@ export default async function DashboardPage() {
         <div className="space-y-2 text-sm">
           {!timelineItems.length ? (
             <div className="up-empty-state py-14 text-center">
-              <p className="text-3xl">📝</p>
+              <IconifyIcon icon="material-symbols:edit-note-rounded" className="size-8" />
               <p className="mt-2">请开始记录您的一天吧</p>
             </div>
           ) : null}

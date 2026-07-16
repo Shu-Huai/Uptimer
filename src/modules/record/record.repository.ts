@@ -15,8 +15,8 @@ export const recordRepository = {
       where: {
         userId: args.userId,
         id: args.excludeId ? { not: args.excludeId } : undefined,
-        startAt: { lt: args.endAt },
-        endAt: { gt: args.startAt },
+        startAt: { lte: args.endAt },
+        endAt: { gte: args.startAt },
       },
       select: {
         id: true,

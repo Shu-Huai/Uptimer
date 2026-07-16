@@ -66,7 +66,7 @@ export default async function GoalsPage({ searchParams }: PageProps) {
               <article key={goal.id} className="up-list-item p-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-[#384862]">
-                    <IconifyIcon icon={goal.icon} fallback="🎯" className="mr-1 inline-block size-4 align-[-2px]" /> {goal.name}
+                    <IconifyIcon icon={goal.icon} fallback="material-symbols:target" className="mr-1 inline-block size-4 align-[-2px]" /> {goal.name}
                   </h3>
                 </div>
 
@@ -75,7 +75,7 @@ export default async function GoalsPage({ searchParams }: PageProps) {
                 <div className="mt-2">
                   <div className="mb-1 flex items-center justify-between text-xs text-[#7587a2]">
                     <span>
-                      {goal.progress.currentMinutes}/{goal.targetMinutes} 分钟
+                      {formatMinutes(goal.progress.currentMinutes)} / {formatMinutes(goal.targetMinutes)}
                     </span>
                     <span>{progressPercent}%</span>
                   </div>
@@ -100,7 +100,7 @@ export default async function GoalsPage({ searchParams }: PageProps) {
                     <input type="hidden" name="id" value={goal.id} />
                     <input type="hidden" name="enabled" value="false" />
                     <input type="hidden" name="returnTo" value="/goals" />
-                    <button type="submit" className="up-inline-chip cursor-pointer">
+                    <button type="submit" className="up-delete-btn cursor-pointer px-3 py-1.5 text-xs">
                       删除
                     </button>
                   </form>

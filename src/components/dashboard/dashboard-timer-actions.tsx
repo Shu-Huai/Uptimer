@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { IconifyIcon } from "@/components/ui/iconify-icon";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 type ActivityOption = {
   id: string;
@@ -129,18 +130,13 @@ export function DashboardTimerActions({
         </div>
       ) : (
         <div className="mt-2 grid gap-2">
-          <select
-            className="up-field"
+          <CustomSelect
+            name="dashboardActivity"
+            options={activities.map((item) => ({ value: item.id, label: item.name }))}
             value={selectedActivityId}
-            onChange={(event) => setSelectedActivityId(event.target.value)}
-          >
-            <option value="">请选择活动</option>
-            {activities.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedActivityId}
+            placeholder="请选择活动"
+          />
           <p className="text-xs text-[#97a5bb]">
             {selectedActivity ? `将开始活动：${selectedActivity.name}` : "请选择一个已启用活动"}
           </p>

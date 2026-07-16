@@ -20,8 +20,7 @@ export default async function NewGoalPage({ searchParams }: PageProps) {
     <div className="space-y-3 pb-10">
       <header className="up-card up-page-header">
         <BackButton fallbackHref="/goals" />
-        <h1 className="up-page-title">新建目标</h1>
-        <span className="up-page-meta">V1</span>
+        <h1 className="up-page-title up-header-center-title">新建目标</h1>
       </header>
 
       <FeedbackBanner error={error} />

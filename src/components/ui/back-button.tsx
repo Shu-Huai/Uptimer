@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 
+import { IconifyIcon } from "@/components/ui/iconify-icon";
+
 type BackButtonProps = {
   fallbackHref: string;
   className?: string;
@@ -25,7 +27,7 @@ export function BackButton({
 
   return (
     <button type="button" onClick={handleBack} className={className} aria-label={label}>
-      ←
+      <IconifyIcon icon="solar:alt-arrow-left-outline" className="up-icon up-icon-md" />
     </button>
   );
 }

@@ -238,7 +238,7 @@ export function RecordsTimelineMobile({
           <div key={tab} className="up-switch-fade h-full min-h-0">
             {tab === "timeline" ? (
               <>
-              <p className="mb-3 text-center text-xl font-semibold  text-base ">{titleDate}</p>
+              <p className="up-text-primary mb-3 text-center text-xl font-semibold">{titleDate}</p>
 
               <div className="space-y-2">
                 {items.map((item) =>
@@ -248,7 +248,7 @@ export function RecordsTimelineMobile({
                         <p className="text-sm text-[#7e8fa6]">{formatTimeShort(item.gap.startAt)}</p>
                         <p className="text-[11px] text-[#b1bdce]">{formatTimeShort(item.gap.endAt)}</p>
                       </div>
-                      <div className="up-empty-state flex items-center justify-between border-[#d4e8ff] bg-[#f6fbff] px-3 py-2">
+                      <div className="up-timeline-gap up-empty-state flex items-center justify-between border-[#d4e8ff] bg-[#f6fbff] px-3 py-2">
                         <p className="flex items-center gap-1 text-sm text-[#7791b2]">
                           <IconifyIcon icon="solar:question-circle-outline" className="up-icon up-icon-sm" />
                           空白: {formatDurationSpan(item.gap.startAt, item.gap.endAt)}
@@ -256,7 +256,7 @@ export function RecordsTimelineMobile({
                         <button
                           type="button"
                           onClick={() => openBackfill(item.gap.startAt, item.gap.endAt)}
-                          className="inline-flex size-7 items-center justify-center rounded-full bg-[#e8f4ff] text-[#2a9df4]"
+                          className="up-timeline-gap-add inline-flex size-7 items-center justify-center rounded-full bg-[#e8f4ff] text-[#2a9df4]"
                           aria-label="补记该空白时间段"
                         >
                           <IconifyIcon icon="material-symbols:add" className="up-icon up-icon-md" />
@@ -272,7 +272,7 @@ export function RecordsTimelineMobile({
                       <button
                         type="button"
                         onClick={() => openEditRecord(item.record)}
-                        className={`grid w-full grid-cols-[1fr_auto_auto] items-center gap-2 rounded-2xl border px-3 py-2 text-left ${rowToneClasses(item.record)}`}
+                        className={`up-timeline-record grid w-full grid-cols-[1fr_auto_auto] items-center gap-2 rounded-2xl border px-3 py-2 text-left ${rowToneClasses(item.record)}`}
                       >
                         <div className="min-w-0">
                           <p className="truncate text-base font-semibold text-[#39465f]">
@@ -343,8 +343,8 @@ export function RecordsTimelineMobile({
           mode="edit"
           recordId={editingRecord.id}
           activities={activities}
-          defaultStart={format(parseDateSafe(editingRecord.startAt), "yyyy-MM-dd'T'HH:mm")}
-          defaultEnd={format(parseDateSafe(editingRecord.endAt), "yyyy-MM-dd'T'HH:mm")}
+          defaultStart={format(parseDateSafe(editingRecord.startAt), "yyyy-MM-dd'T'HH:mm:ss")}
+          defaultEnd={format(parseDateSafe(editingRecord.endAt), "yyyy-MM-dd'T'HH:mm:ss")}
           defaultActivityId={editingRecord.activityId}
           defaultNote={editingRecord.note ?? ""}
           returnDate={dateValue}

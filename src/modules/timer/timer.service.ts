@@ -97,7 +97,7 @@ export const timerService = {
           startAt: running.startedAt,
           endAt: safeEnd,
           source: "TIMER",
-          note: parsed.note || "计时生成记录",
+          note: parsed.note,
         },
         tx,
       );

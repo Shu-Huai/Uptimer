@@ -33,7 +33,15 @@ type WeekRangePickerProps = {
   weekRangeText: string;
 };
 
-type AnalysisRangePickerProps = DayRangePickerProps | WeekRangePickerProps;
+type MonthRangePickerProps = {
+  mode: "month";
+  monthValue: string;
+  monthLabel: string;
+  prevMonth: string;
+  nextMonth: string;
+};
+
+type AnalysisRangePickerProps = DayRangePickerProps | WeekRangePickerProps | MonthRangePickerProps;
 
 function parseYmd(value: string): Date {
   return startOfDay(new Date(`${value}T00:00:00`));
@@ -48,6 +56,12 @@ function parseWeekValue(weekValue: string): Date {
   const jan4Weekday = (jan4.getDay() + 6) % 7;
   const firstMonday = addDays(jan4, -jan4Weekday);
   return addDays(firstMonday, (week - 1) * 7);
+}
+
+function parseMonthValue(monthValue: string): Date {
+  const match = /^(\d{4})-(\d{2})$/.exec(monthValue);
+  if (!match) return startOfMonth(new Date());
+  return startOfMonth(new Date(Number(match[1]), Number(match[2]) - 1, 1));
 }
 
 function toWeekValue(monday: Date): string {
@@ -89,8 +103,9 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const selectedDay = props.mode === "day" ? parseYmd(props.dayValue) : null;
   const selectedWeekMonday = props.mode === "week" ? parseWeekValue(props.weekValue) : null;
+  const selectedMonth = props.mode === "month" ? parseMonthValue(props.monthValue) : null;
   const [viewMonth, setViewMonth] = useState<Date>(
-    selectedDay ?? selectedWeekMonday ?? startOfDay(new Date()),
+    selectedDay ?? selectedWeekMonday ?? selectedMonth ?? startOfDay(new Date()),
   );
 
   useEffect(() => {
@@ -127,7 +142,7 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
 
   function togglePanel() {
     if (!panelMounted) {
-      setViewMonth(selectedDay ?? selectedWeekMonday ?? startOfDay(new Date()));
+      setViewMonth(selectedDay ?? selectedWeekMonday ?? selectedMonth ?? startOfDay(new Date()));
       setPanelMounted(true);
       window.requestAnimationFrame(() => setOpen(true));
       return;
@@ -154,6 +169,11 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
     closePanel();
   }
 
+  function handlePickMonth(dayInMonth: Date) {
+    pushWithTransition(`/analysis?period=month&month=${format(dayInMonth, "yyyy-MM")}`);
+    closePanel();
+  }
+
   return (
     <section ref={containerRef} className={`relative up-card p-3 ${open ? "z-30" : "z-0"}`}>
       <div className="grid grid-cols-[86px_1fr_86px] items-center gap-2">
@@ -162,13 +182,15 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
           className="up-secondary-btn px-3 py-2 text-sm"
           onClick={() =>
             pushWithTransition(
-              props.mode === "day"
-                ? `/analysis?period=day&day=${props.prevDay}`
-                : `/analysis?period=week&week=${props.prevWeek}`,
+                props.mode === "day"
+                  ? `/analysis?period=day&day=${props.prevDay}`
+                  : props.mode === "week"
+                    ? `/analysis?period=week&week=${props.prevWeek}`
+                    : `/analysis?period=month&month=${props.prevMonth}`,
             )
           }
         >
-          {props.mode === "day" ? "前一天" : "上一周"}
+          {props.mode === "day" ? "前一天" : props.mode === "week" ? "上一周" : "上个月"}
         </button>
 
         <button
@@ -176,7 +198,7 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
           onClick={togglePanel}
           className="up-pill h-10 w-full text-sm font-semibold up-text-primary"
         >
-          {props.mode === "day" ? props.dayLabel : props.weekLabel}
+          {props.mode === "day" ? props.dayLabel : props.mode === "week" ? props.weekLabel : props.monthLabel}
         </button>
 
         <button
@@ -184,13 +206,15 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
           className="up-secondary-btn px-3 py-2 text-sm"
           onClick={() =>
             pushWithTransition(
-              props.mode === "day"
-                ? `/analysis?period=day&day=${props.nextDay}`
-                : `/analysis?period=week&week=${props.nextWeek}`,
+                props.mode === "day"
+                  ? `/analysis?period=day&day=${props.nextDay}`
+                  : props.mode === "week"
+                    ? `/analysis?period=week&week=${props.nextWeek}`
+                    : `/analysis?period=month&month=${props.nextMonth}`,
             )
           }
         >
-          {props.mode === "day" ? "后一天" : "下一周"}
+          {props.mode === "day" ? "后一天" : props.mode === "week" ? "下一周" : "下个月"}
         </button>
       </div>
 
@@ -234,7 +258,7 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
                     type="button"
                     onClick={() => (props.mode === "week" ? handlePickWeek(monday) : undefined)}
                     className={`rounded-md py-1 text-sm ${
-                      isSelectedWeek ? "bg-[#111] text-white" : "text-[#5f718d]"
+                      isSelectedWeek ? "bg-[#2a9df4] text-white" : "text-[#5f718d]"
                     }`}
                   >
                     {weekIndexLabel(monday)}
@@ -248,21 +272,31 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
                       props.mode === "week" && selectedWeekMonday
                         ? day >= selectedWeekMonday && day <= addDays(selectedWeekMonday, 6)
                         : false;
+                    const isSelectedMonth =
+                      props.mode === "month" && selectedMonth ? isSameMonth(day, selectedMonth) : false;
 
                     return (
                       <button
                         key={toYmd(day)}
                         type="button"
-                        onClick={() => (props.mode === "day" ? handlePickDay(day) : handlePickWeek(day))}
+                        onClick={() =>
+                          props.mode === "day"
+                            ? handlePickDay(day)
+                            : props.mode === "week"
+                              ? handlePickWeek(day)
+                              : handlePickMonth(day)
+                        }
                         className={`rounded-md ml-1 py-1 text-base transition ${
                           !isCurrentMonth
                             ? "text-[#a8b2c0]"
                             : isSelectedDay
                               ? "bg-[#2a9df4] text-white"
                               : isInSelectedWeek
-                                ? "bg-[#111] text-white"
+                                ? "bg-[#2a9df4] text-white"
+                                : isSelectedMonth
+                                  ? "bg-[#2a9df4] text-white"
                                 : "text-[#1f2e45]"
-                        } ${isToday && !isSelectedDay && !isInSelectedWeek ? "ring-1 ring-[#a8c5e8]" : ""}`}
+                        } ${isToday && !isSelectedDay && !isInSelectedWeek && !isSelectedMonth ? "ring-1 ring-[#a8c5e8]" : ""}`}
                       >
                         {format(day, "d")}
                       </button>
@@ -280,28 +314,19 @@ export function AnalysisRangePicker(props: AnalysisRangePickerProps) {
               onClick={() => {
                 if (props.mode === "day") {
                   pushWithTransition(`/analysis?period=day&day=${toYmd(today)}`);
-                } else {
-                  pushWithTransition("/analysis?period=week");
-                }
-                closePanel();
-              }}
-            >
-              清除
-            </button>
-            <button
-              type="button"
-              className="text-[#2a9df4]"
-              onClick={() => {
-                if (props.mode === "day") {
-                  pushWithTransition(`/analysis?period=day&day=${toYmd(today)}`);
-                } else {
+                } else if (props.mode === "week") {
                   const monday = startOfWeek(today, { weekStartsOn: 1 });
                   pushWithTransition(`/analysis?period=week&week=${toWeekValue(monday)}`);
+                } else {
+                  pushWithTransition(`/analysis?period=month&month=${format(today, "yyyy-MM")}`);
                 }
                 closePanel();
               }}
             >
-              本周
+              {props.mode === "day" ? "今天" : props.mode === "week" ? "本周" : "本月"}
+            </button>
+            <button type="button" className="text-[#2a9df4]" onClick={closePanel}>
+              关闭
             </button>
           </div>
         </div>

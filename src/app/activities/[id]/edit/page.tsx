@@ -29,8 +29,7 @@ export default async function EditActivityPage({ params, searchParams }: EditAct
     <div className="space-y-3 pb-10">
       <header className="up-card up-page-header">
         <BackButton fallbackHref="/activities" />
-        <h1 className="up-page-title">编辑活动</h1>
-        <span className="up-page-meta">⋯</span>
+        <h1 className="up-page-title up-header-center-title">编辑活动</h1>
       </header>
 
       <FeedbackBanner error={error} />

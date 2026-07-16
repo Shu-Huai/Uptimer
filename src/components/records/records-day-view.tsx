@@ -3,6 +3,8 @@
 import { isSameDay, parseISO } from "date-fns";
 import { useMemo, useState } from "react";
 
+import { IconifyIcon } from "@/components/ui/iconify-icon";
+
 type TimelineRecord = {
   id: string;
   activityId: string;
@@ -120,7 +122,7 @@ export function RecordsDayView({ dateValue, records, onRecordClick }: RecordsDay
             className="up-ghost-icon-btn grid size-7 place-items-center text-xs"
             title="缩小"
           >
-            🔍
+            <IconifyIcon icon="material-symbols:zoom-out" className="size-4" />
           </button>
           <button
             type="button"
@@ -128,7 +130,7 @@ export function RecordsDayView({ dateValue, records, onRecordClick }: RecordsDay
             className="up-ghost-icon-btn grid size-7 place-items-center text-xs"
             title="放大"
           >
-            🔎
+            <IconifyIcon icon="material-symbols:zoom-in" className="size-4" />
           </button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { BackButton } from "@/components/ui/back-button";
+import { SettlementRollbackButton } from "@/components/goals/settlement-rollback-button";
 import { SectionCard } from "@/components/ui/section-card";
 import { requireUserId } from "@/lib/auth-guard";
 import { decimalToNumber } from "@/lib/utils";
@@ -49,15 +50,18 @@ export default async function GoalHistoryPage({ params }: GoalHistoryPageProps) 
         <div className="space-y-2">
           {history.map((item) => (
             <article key={item.id} className="up-list-item px-3 py-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <p className="font-semibold text-[#40516d]">{formatRange(item.periodStart, item.periodEnd)}</p>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs ${
-                    item.isCompleted ? "bg-[#e9f7ef] text-[#3e9f5c]" : "bg-[#fff2e8] text-[#d87f2d]"
-                  }`}
-                >
-                  {item.isCompleted ? "已完成" : "未完成"}
-                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs ${
+                      item.isCompleted ? "bg-[#e9f7ef] text-[#3e9f5c]" : "bg-[#fff2e8] text-[#d87f2d]"
+                    }`}
+                  >
+                    {item.isCompleted ? "已完成" : "未完成"}
+                  </span>
+                  <SettlementRollbackButton goalId={id} settlementId={item.id} />
+                </div>
               </div>
               <p className="mt-1 text-xs text-[#8fa0bb]">
                 {item.totalMinutes}/{item.targetMinutesSnapshot} 分钟

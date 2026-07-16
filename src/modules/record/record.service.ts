@@ -20,7 +20,7 @@ type NormalizedCreateRecordInput = {
   startAt: Date;
   endAt: Date;
   source: RecordSource;
-  note?: string;
+  note?: string | null;
 };
 
 function computeDurationMinutes(startAt: Date, endAt: Date): number {

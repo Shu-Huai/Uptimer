@@ -10,7 +10,7 @@ async function createStarterData(userId: string) {
     data: {
       userId,
       name: "学习",
-      icon: "📘",
+      icon: "material-symbols:menu-book",
       nature: "POSITIVE",
       rewardRatePerHour: 8.34,
     },

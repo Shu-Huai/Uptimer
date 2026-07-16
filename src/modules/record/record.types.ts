@@ -5,7 +5,7 @@ export type CreateRecordInput = {
   activityId: string;
   startAt: Date;
   endAt: Date;
-  note?: string;
+  note?: string | null;
   source: RecordSource;
 };
 
@@ -17,7 +17,7 @@ export type UpdateManualRecordInput = {
   activityId: string;
   startAt: Date;
   endAt: Date;
-  note?: string;
+  note?: string | null;
 };
 
 export type DeleteManualRecordInput = {

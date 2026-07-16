@@ -1,6 +1,8 @@
 import { GoalPeriodType } from "@prisma/client";
 import { IconifyPicker } from "@/components/ui/iconify-picker";
 import { GoalActivityPicker } from "@/components/goals/goal-activity-picker";
+import { CustomSelect } from "@/components/ui/custom-select";
+import { CustomNumberInput } from "@/components/ui/custom-number-input";
 
 type GoalEditorFormProps = {
   action: (formData: FormData) => void | Promise<void>;
@@ -53,11 +55,15 @@ export function GoalEditorForm({ action, submitText, activities, goal }: GoalEdi
 
       <label className="up-form-label">
         周期
-        <select name="periodType" className="up-field" defaultValue={goal?.periodType ?? "DAILY"}>
-          <option value="DAILY">每日</option>
-          <option value="WEEKLY">每周</option>
-          <option value="MONTHLY">每月</option>
-        </select>
+        <CustomSelect
+          name="periodType"
+          defaultValue={goal?.periodType ?? "DAILY"}
+          options={[
+            { value: "DAILY", label: "每日" },
+            { value: "WEEKLY", label: "每周" },
+            { value: "MONTHLY", label: "每月" },
+          ]}
+        />
       </label>
 
       <fieldset className="grid gap-2">
@@ -65,16 +71,14 @@ export function GoalEditorForm({ action, submitText, activities, goal }: GoalEdi
         <div className="grid grid-cols-2 gap-2">
           <label className="up-form-label text-[#7f8ea5]">
             小时
-            <input name="targetHours" type="number" min={0} className="up-field" defaultValue={targetHours} />
+            <CustomNumberInput name="targetHours" min={0} defaultValue={targetHours} />
           </label>
           <label className="up-form-label text-[#7f8ea5]">
             分钟
-            <input
+            <CustomNumberInput
               name="targetMinutesPart"
-              type="number"
               min={0}
               max={59}
-              className="up-field"
               defaultValue={targetMinutesPart}
             />
           </label>
@@ -82,30 +86,26 @@ export function GoalEditorForm({ action, submitText, activities, goal }: GoalEdi
       </fieldset>
 
       <fieldset className="grid gap-2">
-        <legend className="text-sm text-[#637083]">关联活动（至少选择 1 项）</legend>
+        <legend className="text-sm text-[#637083] mb-1">关联活动（至少选择 1 项）</legend>
         <GoalActivityPicker activities={activities} defaultSelectedIds={[...selectedIds]} />
       </fieldset>
 
       <div className="grid grid-cols-2 gap-2">
         <label className="up-form-label">
           完成奖励积分
-          <input
+          <CustomNumberInput
             name="rewardPoints"
-            type="number"
             min={0}
-            step="0.01"
-            className="up-field"
+            step={0.01}
             defaultValue={goal?.rewardPoints ?? 0}
           />
         </label>
         <label className="up-form-label">
           失败扣减积分
-          <input
+          <CustomNumberInput
             name="penaltyPoints"
-            type="number"
             min={0}
-            step="0.01"
-            className="up-field"
+            step={0.01}
             defaultValue={goal?.penaltyPoints ?? 0}
           />
         </label>

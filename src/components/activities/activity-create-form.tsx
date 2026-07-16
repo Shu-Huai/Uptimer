@@ -1,5 +1,6 @@
 import { createActivityAction } from "@/actions/activity.actions";
 import { IconifyPicker } from "@/components/ui/iconify-picker";
+import { CustomNumberInput } from "@/components/ui/custom-number-input";
 
 export function ActivityCreateForm() {
   return (
@@ -14,19 +15,19 @@ export function ActivityCreateForm() {
         <div className="grid grid-cols-3 gap-2">
           <label className="cursor-pointer">
             <input type="radio" name="nature" value="POSITIVE" defaultChecked className="peer sr-only" />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="positive" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               积极
             </span>
           </label>
           <label className="cursor-pointer">
             <input type="radio" name="nature" value="NEUTRAL" className="peer sr-only" />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="neutral" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               普通
             </span>
           </label>
           <label className="cursor-pointer">
             <input type="radio" name="nature" value="NEGATIVE" className="peer sr-only" />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="negative" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-sm text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               消极
             </span>
           </label>
@@ -35,12 +36,10 @@ export function ActivityCreateForm() {
 
       <label className="up-form-label">
         回报率 (分/小时)
-        <input
+        <CustomNumberInput
           name="rewardRatePerHour"
           required
-          type="number"
-          step="0.01"
-          className="up-field"
+          step={0.01}
           placeholder="例如：8.34"
         />
       </label>

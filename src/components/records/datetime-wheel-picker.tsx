@@ -2,11 +2,12 @@
 
 import { format } from "date-fns";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode } from "react";
+import type { ReactNode, WheelEvent } from "react";
 
 import { formatDateTimeInput } from "@/lib/time";
 
 const ITEM_HEIGHT = 36;
+const HORIZONTAL_ITEM_WIDTH = 48;
 const VISIBLE_ROWS = 5;
 const WHEEL_PADDING = ((VISIBLE_ROWS - 1) / 2) * ITEM_HEIGHT;
 const DAY_RANGE = 365;
@@ -21,6 +22,7 @@ type WheelColumnProps = {
   options: WheelOption[];
   selectedIndex: number;
   onSelect: (index: number) => void;
+  horizontal?: boolean;
 };
 
 type DateTimeWheelPickerProps = {
@@ -41,7 +43,7 @@ function parseDateInput(value: string): Date {
     return new Date();
   }
 
-  parsed.setSeconds(0, 0);
+  parsed.setMilliseconds(0);
   return parsed;
 }
 
@@ -65,11 +67,12 @@ function buildDayList(anchor: Date) {
   });
 }
 
-function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColumnProps) {
+function WheelColumn({ ariaLabel, options, selectedIndex, onSelect, horizontal = false }: WheelColumnProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const settleTimerRef = useRef<number | null>(null);
   const syncedTimerRef = useRef<number | null>(null);
   const syncingRef = useRef(false);
+  const hasMountedRef = useRef(false);
 
   const syncToIndex = useCallback(
     (index: number, behavior: ScrollBehavior = "auto") => {
@@ -77,7 +80,9 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
       if (!scroller) return;
 
       syncingRef.current = true;
-      scroller.scrollTo({ top: index * ITEM_HEIGHT, behavior });
+      scroller.scrollTo(
+        horizontal ? { left: index * HORIZONTAL_ITEM_WIDTH, behavior } : { top: index * ITEM_HEIGHT, behavior },
+      );
       if (syncedTimerRef.current) {
         window.clearTimeout(syncedTimerRef.current);
       }
@@ -85,11 +90,12 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
         syncingRef.current = false;
       }, 120);
     },
-    [],
+    [horizontal],
   );
 
   useEffect(() => {
-    syncToIndex(selectedIndex);
+    syncToIndex(selectedIndex, hasMountedRef.current ? "smooth" : "auto");
+    hasMountedRef.current = true;
   }, [selectedIndex, syncToIndex]);
 
   useEffect(
@@ -108,7 +114,9 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
     const scroller = scrollerRef.current;
     if (!scroller) return;
 
-    const rawIndex = Math.round(scroller.scrollTop / ITEM_HEIGHT);
+    const rawIndex = Math.round(
+      (horizontal ? scroller.scrollLeft : scroller.scrollTop) / (horizontal ? HORIZONTAL_ITEM_WIDTH : ITEM_HEIGHT),
+    );
     const nextIndex = clamp(rawIndex, 0, options.length - 1);
     if (nextIndex !== selectedIndex) {
       onSelect(nextIndex);
@@ -126,16 +134,31 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
     settleTimerRef.current = window.setTimeout(() => settleSelection(), 90);
   }
 
+  function handleWheel(event: WheelEvent<HTMLDivElement>) {
+    if (!horizontal) return;
+
+    const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    if (!delta) return;
+
+    event.preventDefault();
+    scrollerRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+  }
+
   return (
-    <div className="up-wheel-col-wrap">
+    <div className={`up-wheel-col-wrap ${horizontal ? "is-horizontal" : ""}`}>
       <div
         ref={scrollerRef}
-        className="up-wheel-col"
+        className={`up-wheel-col ${horizontal ? "is-horizontal" : ""}`}
         onScroll={handleScroll}
+        onWheel={handleWheel}
         role="listbox"
         aria-label={ariaLabel}
       >
-        <div style={{ height: WHEEL_PADDING }} aria-hidden />
+        <div
+          className={horizontal ? "up-wheel-horizontal-spacer" : undefined}
+          style={horizontal ? undefined : { height: WHEEL_PADDING }}
+          aria-hidden
+        />
         {options.map((option, index) => {
           const active = index === selectedIndex;
           return (
@@ -143,7 +166,7 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
               key={`${option.label}-${index}`}
               type="button"
               onClick={() => onSelect(index)}
-              className={`up-wheel-item ${active ? "is-active" : ""}`}
+              className={`up-wheel-item ${horizontal ? "is-horizontal" : ""} ${active ? "is-active" : ""}`}
               role="option"
               aria-selected={active}
             >
@@ -152,7 +175,11 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect }: WheelColum
             </button>
           );
         })}
-        <div style={{ height: WHEEL_PADDING }} aria-hidden />
+        <div
+          className={horizontal ? "up-wheel-horizontal-spacer" : undefined}
+          style={horizontal ? undefined : { height: WHEEL_PADDING }}
+          aria-hidden
+        />
       </div>
       <div className="up-wheel-highlight" aria-hidden />
     </div>
@@ -196,9 +223,13 @@ export function DateTimeWheelPicker({ name, label, value, onChange, actions }: D
     () => Array.from({ length: 60 }, (_, minute) => ({ label: String(minute).padStart(2, "0") })),
     [],
   );
+  const secondOptions = useMemo<WheelOption[]>(
+    () => Array.from({ length: 60 }, (_, second) => ({ label: String(second).padStart(2, "0") })),
+    [],
+  );
 
   function updateValue(nextDate: Date) {
-    nextDate.setSeconds(0, 0);
+    nextDate.setMilliseconds(0);
     onChange(formatDateTimeInput(nextDate));
   }
 
@@ -216,6 +247,12 @@ export function DateTimeWheelPicker({ name, label, value, onChange, actions }: D
     updateValue(replaceMinute(selectedDate, index));
   }
 
+  function handleSecondSelect(index: number) {
+    const nextDate = new Date(selectedDate);
+    nextDate.setSeconds(index, 0);
+    updateValue(nextDate);
+  }
+
   return (
     <div className="up-soft-panel up-datetime-picker border-[#e9eef6] bg-[#fbfdff] p-2.5">
       <div className="mb-2 flex items-center justify-between text-sm text-[#74839a]">
@@ -223,8 +260,17 @@ export function DateTimeWheelPicker({ name, label, value, onChange, actions }: D
         {actions}
       </div>
 
-      <div className="up-soft-panel up-datetime-picker-grid grid grid-cols-3 gap-1.5 rounded-xl bg-[#f4f8fd] p-1.5">
-        <WheelColumn ariaLabel={`${label}-日期`} options={dayList} selectedIndex={selectedDayIndex} onSelect={handleDaySelect} />
+      <div className="up-soft-panel up-datetime-date-row rounded-xl bg-[#f4f8fd] p-1.5">
+        <WheelColumn
+          ariaLabel={`${label}-日期`}
+          options={dayList}
+          selectedIndex={selectedDayIndex}
+          onSelect={handleDaySelect}
+          horizontal
+        />
+      </div>
+
+      <div className="up-soft-panel up-datetime-picker-grid mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl bg-[#f4f8fd] p-1.5">
         <WheelColumn
           ariaLabel={`${label}-小时`}
           options={hourOptions}
@@ -236,6 +282,12 @@ export function DateTimeWheelPicker({ name, label, value, onChange, actions }: D
           options={minuteOptions}
           selectedIndex={selectedDate.getMinutes()}
           onSelect={handleMinuteSelect}
+        />
+        <WheelColumn
+          ariaLabel={`${label}-秒`}
+          options={secondOptions}
+          selectedIndex={selectedDate.getSeconds()}
+          onSelect={handleSecondSelect}
         />
       </div>
 

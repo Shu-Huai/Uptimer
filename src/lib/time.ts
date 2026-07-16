@@ -21,7 +21,7 @@ export function parseDayParam(day: string | undefined): Date {
 }
 
 export function formatDateTimeInput(value: Date): string {
-  return format(value, "yyyy-MM-dd'T'HH:mm");
+  return format(value, "yyyy-MM-dd'T'HH:mm:ss");
 }
 
 export function formatDay(value: Date): string {

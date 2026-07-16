@@ -11,6 +11,7 @@ import {
   updateActivityAction,
 } from "@/actions/activity.actions";
 import { IconifyIcon } from "@/components/ui/iconify-icon";
+import { CustomNumberInput } from "@/components/ui/custom-number-input";
 import { IconifyPicker } from "@/components/ui/iconify-picker";
 
 type ActivityListItem = {
@@ -191,7 +192,7 @@ export function ActivityListManager({ activities }: ActivityListManagerProps) {
               <input type="hidden" name="returnTo" value="/activities" />
               <button
                 type="submit"
-                className="up-danger-btn w-full text-sm"
+                className="up-delete-btn w-full text-sm"
               >
                 删除活动
               </button>
@@ -222,7 +223,7 @@ export function ActivityListManager({ activities }: ActivityListManagerProps) {
                       defaultChecked={editActivity.nature === nature}
                       className="peer sr-only"
                     />
-                    <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+                    <span data-nature={nature.toLowerCase()} className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
                       {NATURE_LABEL[nature]}
                     </span>
                   </label>
@@ -232,12 +233,10 @@ export function ActivityListManager({ activities }: ActivityListManagerProps) {
 
             <label className="up-form-label">
               回报率 (分/小时)
-              <input
+              <CustomNumberInput
                 name="rewardRatePerHour"
                 required
-                type="number"
-                step="0.01"
-                className="up-field"
+                step={0.01}
                 defaultValue={editActivity.rewardRatePerHour}
               />
             </label>

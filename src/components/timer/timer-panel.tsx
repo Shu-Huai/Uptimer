@@ -213,11 +213,17 @@ export function TimerPanel({ activities, initialRunningSession }: TimerPanelProp
 
     startTransition(async () => {
       try {
+        let nextStartAt: string | undefined;
         if (runningSession) {
-          await requestApi<{ result: unknown }>("/api/timer/stop", { mode: "FINISH" });
+          const stopData = await requestApi<{
+            result: { record: { endAt: string } };
+          }>("/api/timer/stop", { mode: "FINISH" });
+          const previousEndAt = new Date(stopData.result.record.endAt);
+          nextStartAt = new Date(previousEndAt.getTime() + 1000).toISOString();
         }
         const data = await requestApi<{ session: RunningSession }>("/api/timer/start", {
           activityId: resolvedSelectedActivityId,
+          startedAt: nextStartAt,
         });
         const session = normalizeRunningSession(data.session);
         setRunningSession(session);
@@ -325,7 +331,7 @@ export function TimerPanel({ activities, initialRunningSession }: TimerPanelProp
                           key={activity.id}
                           type="button"
                           onClick={() => handleActivitySelect(activity)}
-                          className="text-center"
+                          className="up-activity-option text-center"
                           aria-pressed={isActive}
                         >
                           <span
@@ -390,7 +396,7 @@ export function TimerPanel({ activities, initialRunningSession }: TimerPanelProp
         <button
           type="button"
           onClick={openActivityPicker}
-          className="up-soft-panel flex w-full items-center justify-between border-[#dfe8f4] bg-[#f4f8fd] px-3 py-3 text-left"
+          className="up-activity-select up-soft-panel flex w-full items-center justify-between border-[#dfe8f4] bg-[#f4f8fd] px-3 py-3 text-left"
         >
           <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
             <span className="inline-flex min-w-0 items-center gap-2">

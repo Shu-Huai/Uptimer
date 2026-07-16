@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { addDays, format, max, min, startOfDay, startOfMonth } from "date-fns";
+import { addDays, addMonths, format, max, min, startOfDay, startOfMonth } from "date-fns";
 
 import { AnalysisRangePicker } from "@/components/analysis/analysis-range-picker";
 import { SectionCard } from "@/components/ui/section-card";
@@ -18,6 +18,13 @@ type BlockState = "POSITIVE" | "NEUTRAL" | "NEGATIVE" | "EMPTY";
 function formatMinutesLabel(minutes: number) {
   if (minutes < 60) return `${minutes} 分`;
   return `${(minutes / 60).toFixed(1)} h`;
+}
+
+function formatRankingDuration(minutes: number) {
+  if (minutes < 60) return `${minutes} 分`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes ? `${hours} 小时 ${remainingMinutes} 分钟` : `${hours} 小时`;
 }
 
 function periodLabel(period: Period) {
@@ -53,6 +60,16 @@ function parseWeekParam(value: string | undefined): Date | null {
   if (!Number.isInteger(year) || !Number.isInteger(week) || week < 1 || week > 53) return null;
   const monday = getIsoWeekMonday(year, week);
   return startOfDay(monday);
+}
+
+function parseMonthParam(value: string | undefined): Date | null {
+  if (!value) return null;
+  const match = /^(\d{4})-(\d{2})$/.exec(value);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) return null;
+  return startOfMonth(new Date(year, month - 1, 1));
 }
 
 function getWeekInputValue(monday: Date): string {
@@ -133,10 +150,22 @@ export default async function AnalysisPage({ searchParams }: PageProps) {
     period === "week"
       ? parseWeekParam(typeof params.week === "string" ? params.week : undefined) ?? defaultWeekMonday
       : defaultWeekMonday;
+  const selectedMonth =
+    period === "month"
+      ? parseMonthParam(typeof params.month === "string" ? params.month : undefined) ?? monthStart
+      : monthStart;
 
   const rangeStart =
-    period === "day" ? selectedDay : period === "week" ? selectedWeekMonday : monthStart;
-  const rangeEnd = period === "day" ? addDays(rangeStart, 1) : period === "week" ? addDays(rangeStart, 7) : addDays(today, 1);
+    period === "day" ? selectedDay : period === "week" ? selectedWeekMonday : selectedMonth;
+  const isCurrentMonth = selectedMonth.getFullYear() === today.getFullYear() && selectedMonth.getMonth() === today.getMonth();
+  const rangeEnd =
+    period === "day"
+      ? addDays(rangeStart, 1)
+      : period === "week"
+        ? addDays(rangeStart, 7)
+        : isCurrentMonth
+          ? addDays(today, 1)
+          : addMonths(selectedMonth, 1);
 
   const dayValue = formatYmd(selectedDay);
   const weekValue = getWeekInputValue(selectedWeekMonday);
@@ -144,9 +173,12 @@ export default async function AnalysisPage({ searchParams }: PageProps) {
   const nextDay = formatYmd(addDays(selectedDay, 1));
   const prevWeek = getWeekInputValue(addDays(selectedWeekMonday, -7));
   const nextWeek = getWeekInputValue(addDays(selectedWeekMonday, 7));
+  const monthValue = format(selectedMonth, "yyyy-MM");
+  const prevMonth = format(addMonths(selectedMonth, -1), "yyyy-MM");
+  const nextMonth = format(addMonths(selectedMonth, 1), "yyyy-MM");
   const weekRangeText = `${format(selectedWeekMonday, "MM/dd")} - ${format(addDays(selectedWeekMonday, 6), "MM/dd")}`;
   const dayRangeText = `${format(selectedDay, "MM/dd")} - ${format(selectedDay, "MM/dd")}`;
-  const monthRangeText = `${format(monthStart, "MM/dd")} - ${format(addDays(today, 0), "MM/dd")}`;
+  const monthRangeText = `${format(selectedMonth, "MM/dd")} - ${format(addDays(rangeEnd, -1), "MM/dd")}`;
   const activeRangeText = period === "day" ? dayRangeText : period === "week" ? weekRangeText : monthRangeText;
 
   const dayStart = startOfDay(addDays(rangeEnd, -1));
@@ -335,6 +367,16 @@ export default async function AnalysisPage({ searchParams }: PageProps) {
         />
       ) : null}
 
+      {period === "month" ? (
+        <AnalysisRangePicker
+          mode="month"
+          monthValue={monthValue}
+          monthLabel={format(selectedMonth, "yyyy年MM月")}
+          prevMonth={prevMonth}
+          nextMonth={nextMonth}
+        />
+      ) : null}
+
       <SectionCard title="时间占比" description={activeRangeText}>
         <div className="flex items-center gap-3">
           <div
@@ -372,7 +414,7 @@ export default async function AnalysisPage({ searchParams }: PageProps) {
               <div key={item.name} className="rounded-xl border border-[#edf2f8] bg-[#fbfdff] px-3 py-2">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-medium text-[#4b5872]">{item.name}</span>
-                  <span className="text-[#98a1b3]">{item.minutes} 分</span>
+                  <span className="text-[#98a1b3]">{formatRankingDuration(item.minutes)}</span>
                 </div>
                 <div className="h-2 rounded-full bg-[#edf3fb]">
                   <div className="h-2 rounded-full bg-[#49b36a]" style={{ width: `${Math.min(100, width)}%` }} />

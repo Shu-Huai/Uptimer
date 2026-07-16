@@ -141,7 +141,7 @@ export function IconifyPicker({
           <p className="mb-2 text-xs text-[#8fa0bb]">结果来自 Iconify Search API，每次最多显示 {SEARCH_LIMIT} 条</p>
           {error ? <p className="mb-2 text-xs text-[#e05c5c]">{error}</p> : null}
 
-          <div className="up-soft-panel max-h-64 overflow-y-auto border-[#e7eef8] bg-[#fbfdff] p-2">
+          <div className="up-soft-panel up-scrollbar max-h-64 overflow-y-auto border-[#e7eef8] bg-[#fbfdff] p-2">
             {!isLoading && icons.length === 0 ? (
               <p className="py-8 text-center text-sm text-[#98a1b3]">暂无结果</p>
             ) : (

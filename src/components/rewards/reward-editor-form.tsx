@@ -1,4 +1,5 @@
 import { IconifyPicker } from "@/components/ui/iconify-picker";
+import { CustomNumberInput } from "@/components/ui/custom-number-input";
 
 type RewardEditorFormProps = {
   action: (formData: FormData) => Promise<void>;
@@ -25,13 +26,11 @@ export function RewardEditorForm({ action, submitText, reward }: RewardEditorFor
 
       <label className="up-form-label">
         所需积分
-        <input
+        <CustomNumberInput
           name="pricePoints"
           required
-          type="number"
           min={0.01}
-          step="0.01"
-          className="up-field"
+          step={0.01}
           defaultValue={reward?.pricePoints ?? ""}
           placeholder="例如：500"
         />
@@ -39,12 +38,10 @@ export function RewardEditorForm({ action, submitText, reward }: RewardEditorFor
 
       <label className="up-form-label">
         库存
-        <input
+        <CustomNumberInput
           name="stockInput"
-          type="number"
           min={0}
-          step="1"
-          className="up-field"
+          step={1}
           defaultValue={reward?.stock ?? ""}
           placeholder="留空表示不限库存"
         />

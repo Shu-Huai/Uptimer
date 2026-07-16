@@ -117,6 +117,17 @@ export const goalRepository = {
     return (tx ?? db).goalSettlement.update(args);
   },
 
+  findSettlementByUserAndId(userId: string, goalId: string, settlementId: string, tx?: Prisma.TransactionClient) {
+    return (tx ?? db).goalSettlement.findFirst({
+      where: { id: settlementId, userId, goalId },
+      include: { goal: { select: { name: true } } },
+    });
+  },
+
+  deleteSettlement(settlementId: string, tx?: Prisma.TransactionClient) {
+    return (tx ?? db).goalSettlement.delete({ where: { id: settlementId } });
+  },
+
   listSettlementsByActivityOverlap(
     userId: string,
     activityIds: string[],

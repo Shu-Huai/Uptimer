@@ -8,7 +8,7 @@ const baseRecordSchema = z.object({
   activityId: textField,
   startAt: z.coerce.date(),
   endAt: z.coerce.date(),
-  note: z.string().trim().max(200, "备注最多 200 个字符").optional(),
+  note: z.string().trim().max(200, "备注最多 200 个字符").nullable().optional(),
 });
 
 export const createRecordSchema = baseRecordSchema

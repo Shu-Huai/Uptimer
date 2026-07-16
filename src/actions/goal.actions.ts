@@ -113,3 +113,23 @@ export async function toggleGoalEnabledAction(formData: FormData) {
   const success = enabled ? "goal-enabled" : "goal-deleted";
   redirect(`${returnTo}?success=${success}`);
 }
+
+export async function rollbackGoalSettlementAction(formData: FormData) {
+  const userId = await requireUserId();
+  const goalId = String(formData.get("goalId") ?? "");
+  const settlementId = String(formData.get("settlementId") ?? "");
+  const returnTo = String(formData.get("returnTo") ?? `/goals/${goalId}/history`);
+
+  try {
+    await goalService.rollbackSettlement({ userId, goalId, settlementId });
+  } catch (error) {
+    redirect(`${returnTo}?error=${encodeURIComponent(toUserMessage(error))}`);
+  }
+
+  revalidatePath(`/goals/${goalId}/history`);
+  revalidatePath(`/goals/${goalId}`);
+  revalidatePath("/goals");
+  revalidatePath("/analysis");
+  revalidatePath("/points");
+  redirect(`${returnTo}?success=settlement-rolled-back`);
+}

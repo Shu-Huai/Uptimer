@@ -22,7 +22,7 @@ export async function createRecordAction(formData: FormData) {
       activityId: String(formData.get("activityId") ?? ""),
       startAt: new Date(String(formData.get("startAt") ?? "")),
       endAt: new Date(String(formData.get("endAt") ?? "")),
-      note: String(formData.get("note") ?? "") || undefined,
+      note: String(formData.get("note") ?? "").trim() || null,
     });
     const nextBalance = await pointsService.getBalance(userId);
 
@@ -66,7 +66,7 @@ export async function updateRecordAction(formData: FormData) {
       activityId: String(formData.get("activityId") ?? ""),
       startAt: new Date(String(formData.get("startAt") ?? "")),
       endAt: new Date(String(formData.get("endAt") ?? "")),
-      note: String(formData.get("note") ?? "") || undefined,
+      note: String(formData.get("note") ?? "").trim() || null,
     });
     const nextBalance = await pointsService.getBalance(userId);
     delta = decimalToNumber(record.pointDelta).toFixed(2);

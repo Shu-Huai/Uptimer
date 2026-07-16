@@ -2,6 +2,7 @@ import type { Activity } from "@prisma/client";
 
 import { updateActivityAction } from "@/actions/activity.actions";
 import { IconifyPicker } from "@/components/ui/iconify-picker";
+import { CustomNumberInput } from "@/components/ui/custom-number-input";
 import { decimalToNumber } from "@/lib/utils";
 
 type ActivityEditFormProps = {
@@ -29,7 +30,7 @@ export function ActivityEditForm({ activity }: ActivityEditFormProps) {
               defaultChecked={activity.nature === "POSITIVE"}
               className="peer sr-only"
             />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="positive" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               积极
             </span>
           </label>
@@ -41,7 +42,7 @@ export function ActivityEditForm({ activity }: ActivityEditFormProps) {
               defaultChecked={activity.nature === "NEUTRAL"}
               className="peer sr-only"
             />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="neutral" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               普通
             </span>
           </label>
@@ -53,7 +54,7 @@ export function ActivityEditForm({ activity }: ActivityEditFormProps) {
               defaultChecked={activity.nature === "NEGATIVE"}
               className="peer sr-only"
             />
-            <span className="block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
+            <span data-nature="negative" className="up-nature-option block rounded-full border border-[#e6ebf2] bg-[#f8fafc] px-3 py-2 text-center text-[#8591a7] transition peer-checked:border-[#d7e7f8] peer-checked:bg-[#f4f9ff] peer-checked:text-[#2a9df4]">
               消极
             </span>
           </label>
@@ -62,12 +63,10 @@ export function ActivityEditForm({ activity }: ActivityEditFormProps) {
 
       <label className="up-form-label">
         回报率 (分/小时)
-        <input
+        <CustomNumberInput
           name="rewardRatePerHour"
           required
-          type="number"
-          step="0.01"
-          className="up-field"
+          step={0.01}
           defaultValue={decimalToNumber(activity.rewardRatePerHour)}
         />
       </label>

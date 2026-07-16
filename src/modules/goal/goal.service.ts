@@ -14,6 +14,7 @@ import type {
   GoalProgressView,
   ReconcileGoalSettlementsByRecordMutationInput,
   RollbackGoalSettlementByRecordDeleteInput,
+  RollbackGoalSettlementInput,
   ToggleGoalEnabledInput,
   UpdateGoalInput,
 } from "./goal.types";
@@ -468,6 +469,40 @@ export const goalService = {
     }
 
     return goalRepository.listGoalSettlementHistory(userId, goalId);
+  },
+
+  async rollbackSettlement(input: RollbackGoalSettlementInput) {
+    return db.$transaction(async (tx) => {
+      const settlement = await goalRepository.findSettlementByUserAndId(
+        input.userId,
+        input.goalId,
+        input.settlementId,
+        tx,
+      );
+      if (!settlement) {
+        throw new NotFoundError("结算记录不存在或已撤回");
+      }
+
+      const pointDelta = decimalToNumber(settlement.pointDelta);
+      if (Math.abs(pointDelta) >= 0.005) {
+        const restoreAmount = Number((-pointDelta).toFixed(2));
+        await pointsService.appendTransaction(
+          {
+            userId: input.userId,
+            type: restoreAmount >= 0 ? PointTransactionType.GOAL_REWARD : PointTransactionType.GOAL_PENALTY,
+            amount: restoreAmount,
+            relatedType: PointRelatedType.GOAL_SETTLEMENT,
+            relatedId: settlement.id,
+            note: `撤回目标结算：${settlement.goal.name}`,
+            happenedAt: new Date(),
+          },
+          tx,
+        );
+      }
+
+      await goalRepository.deleteSettlement(settlement.id, tx);
+      return { settlementId: settlement.id, restoredPoints: Number((-pointDelta).toFixed(2)) };
+    });
   },
 
   async settleOnRecordsVisit(userId: string, now = new Date()) {

@@ -51,7 +51,7 @@ export default async function ActivitiesPage({ searchParams }: PageProps) {
       <header className="up-card up-page-header">
         <BackButton fallbackHref="/dashboard" />
         <h1 className="up-page-title">活动管理</h1>
-        <Link href="/points" className="text-sm up-link-muted">
+        <Link href="/points" className="up-secondary-btn px-3 py-1.5 text-sm">
           流水
         </Link>
       </header>
