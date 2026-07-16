@@ -108,7 +108,6 @@ body {
 }
 
 body * {
-  cursor: default;
   user-select: none;
   -webkit-user-select: none;
   caret-color: transparent;
@@ -692,11 +691,18 @@ label:has(> input[type="radio"]:checked) > .up-nature-option[data-nature="negati
 
 .up-wheel-col {
   height: 100%;
+  cursor: grab;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   touch-action: pan-y;
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.up-wheel-col.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
 }
 
 .up-wheel-col.is-horizontal {
@@ -705,6 +711,10 @@ label:has(> input[type="radio"]:checked) > .up-nature-option[data-nature="negati
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   touch-action: pan-x;
+}
+
+.up-wheel-col.is-horizontal.is-dragging {
+  scroll-snap-type: none;
 }
 
 .up-wheel-horizontal-spacer {

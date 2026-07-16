@@ -2,8 +2,9 @@
 
 import { format } from "date-fns";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ReactNode, WheelEvent } from "react";
+import type { PointerEvent as ReactPointerEvent, ReactNode, WheelEvent } from "react";
 
+import { calculateDragScrollPosition } from "@/components/records/datetime-wheel-drag";
 import { formatDateTimeInput } from "@/lib/time";
 
 const ITEM_HEIGHT = 36;
@@ -73,6 +74,14 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect, horizontal =
   const syncedTimerRef = useRef<number | null>(null);
   const syncingRef = useRef(false);
   const hasMountedRef = useRef(false);
+  const pointerRef = useRef<{
+    id: number;
+    startPointer: number;
+    startScroll: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const syncToIndex = useCallback(
     (index: number, behavior: ScrollBehavior = "auto") => {
@@ -126,7 +135,7 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect, horizontal =
   }
 
   function handleScroll() {
-    if (syncingRef.current) return;
+    if (syncingRef.current || pointerRef.current) return;
 
     if (settleTimerRef.current) {
       window.clearTimeout(settleTimerRef.current);
@@ -144,13 +153,74 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect, horizontal =
     scrollerRef.current?.scrollBy({ left: delta, behavior: "smooth" });
   }
 
+  function pointerPosition(event: ReactPointerEvent<HTMLDivElement>) {
+    return horizontal ? event.clientX : event.clientY;
+  }
+
+  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    pointerRef.current = {
+      id: event.pointerId,
+      startPointer: pointerPosition(event),
+      startScroll: horizontal ? scroller.scrollLeft : scroller.scrollTop,
+      moved: false,
+    };
+    scroller.setPointerCapture(event.pointerId);
+  }
+
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    const drag = pointerRef.current;
+    const scroller = scrollerRef.current;
+    if (!drag || drag.id !== event.pointerId || !scroller) return;
+
+    const currentPointer = pointerPosition(event);
+    if (Math.abs(currentPointer - drag.startPointer) > 4) {
+      drag.moved = true;
+      setIsDragging(true);
+      event.preventDefault();
+    }
+
+    const nextScroll = calculateDragScrollPosition(
+      drag.startScroll,
+      drag.startPointer,
+      currentPointer,
+      horizontal ? HORIZONTAL_ITEM_WIDTH : ITEM_HEIGHT,
+      options.length,
+    );
+    if (horizontal) scroller.scrollLeft = nextScroll;
+    else scroller.scrollTop = nextScroll;
+  }
+
+  function finishPointerDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    const drag = pointerRef.current;
+    if (!drag || drag.id !== event.pointerId) return;
+
+    if (settleTimerRef.current) {
+      window.clearTimeout(settleTimerRef.current);
+      settleTimerRef.current = null;
+    }
+    pointerRef.current = null;
+    setIsDragging(false);
+    if (drag.moved) suppressClickRef.current = true;
+    settleSelection();
+  }
+
   return (
     <div className={`up-wheel-col-wrap ${horizontal ? "is-horizontal" : ""}`}>
       <div
         ref={scrollerRef}
-        className={`up-wheel-col ${horizontal ? "is-horizontal" : ""}`}
+        className={`up-wheel-col ${horizontal ? "is-horizontal" : ""} ${isDragging ? "is-dragging" : ""}`}
         onScroll={handleScroll}
         onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={finishPointerDrag}
+        onPointerCancel={finishPointerDrag}
+        onLostPointerCapture={finishPointerDrag}
         role="listbox"
         aria-label={ariaLabel}
       >
@@ -165,7 +235,13 @@ function WheelColumn({ ariaLabel, options, selectedIndex, onSelect, horizontal =
             <button
               key={`${option.label}-${index}`}
               type="button"
-              onClick={() => onSelect(index)}
+              onClick={() => {
+                if (suppressClickRef.current) {
+                  suppressClickRef.current = false;
+                  return;
+                }
+                onSelect(index);
+              }}
               className={`up-wheel-item ${horizontal ? "is-horizontal" : ""} ${active ? "is-active" : ""}`}
               role="option"
               aria-selected={active}

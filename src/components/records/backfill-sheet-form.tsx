@@ -345,11 +345,11 @@ export function BackfillSheetForm({
             <div>
               <p className="mb-2 text-sm font-semibold text-[#7d8ba1]">活动内容</p>
               <div className="grid grid-cols-[90px_1fr] gap-2">
-                <div className="rounded-2xl bg-[#eaf5ff] p-2 text-center">
+                <div className="up-activity-select rounded-2xl bg-[#eaf5ff] p-2 text-center">
                   <button
                     type="button"
                     onClick={handleOpenActivityPicker}
-                    className="up-activity-select grid w-full gap-1 text-[#597796] disabled:cursor-not-allowed disabled:opacity-55"
+                    className="grid w-full gap-1 text-[#597796] disabled:cursor-not-allowed disabled:opacity-55"
                     disabled={!activities.length}
                   >
                     <span
