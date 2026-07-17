@@ -2,6 +2,10 @@
 
 # dependencies
 /node_modules
+/npm-debug.log*
+/yarn-debug.log*
+/yarn-error.log*
+/pnpm-debug.log*
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,6 +16,16 @@
 
 # testing
 /coverage
+.nyc_output/
+.eslintcache
+
+# local tooling and caches
+/.cache/
+/.turbo/
+/.parcel-cache/
+/.vscode/
+/.idea/
+.history/
 
 # next.js
 /.next/
@@ -22,17 +36,37 @@
 
 # misc
 .DS_Store
+Thumbs.db
+ehthumbs.db
 *.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+
+# local databases and dumps
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
+.envrc
+.direnv/
+
+# local package-manager and tool credentials
+.npmrc
 
 # vercel
 .vercel
@@ -43,8 +77,25 @@ next-env.d.ts
 
 /src/generated/prisma
 
+# Graphify reports, graph data, caches and runtime metadata
+/graphify-out/
+/graphify-out/.graphify_*
+# temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+
 # HarmonyOS / Hvigor generated files
 /harmony/**/build/
 /harmony/**/.hvigor/
 /harmony/**/oh_modules/
 /harmony/**/.idea/
+/harmony/**/.preview/
+/harmony/**/.cxx/
+/harmony/**/local.properties
+/harmony/**/*.hap
+/harmony/**/*.hsp
+/harmony/**/*.har
