@@ -203,6 +203,10 @@ body::after {
   background: transparent;
 }
 
+.arkweb .up-route-loading {
+  top: env(safe-area-inset-top, 0px);
+}
+
 .up-route-loading-bar {
   display: block;
   width: 42%;
